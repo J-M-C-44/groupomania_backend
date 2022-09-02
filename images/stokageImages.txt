@@ -1,0 +1,2 @@
+Fichier servant juste à ne pas avoir de dossier images vide. 
+En effet, si un dossier est vide, il est ignoré par le gitignore. Or on veut un dossier images dans github.
