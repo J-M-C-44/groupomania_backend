@@ -18,8 +18,8 @@ const commentCtrl = require('../controllers/comment');
 
 // création d'un post
 router.post('/',            authorize, multer, checkText,   postCtrl.createPost);
-//ajout/suppression d'un like
-router.post('/:id/like',    authorize,          checkLike,  likeCtrl.createLike);
+// ajout d'un like
+router.post('/:id/like',    authorize,                      likeCtrl.addLike);
 // modification d'un post
 router.put('/:id',          authorize, multer, checkText,   postCtrl.modifyPost);
 // récupération du détail d'un post

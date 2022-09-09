@@ -8,7 +8,7 @@
 module.exports = (req, res, next) => {
     // console.log('controle like');
     // console.log('req.body.like : ', req.body.like);
-    if ( req.body.like == 1 || req.body.like == 0 {
+    if ( req.body.like == 1 || req.body.like == 0) {
         next();
     } else {
         console.log('donnée like invalide : ', req.body.like);

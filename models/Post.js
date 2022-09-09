@@ -11,10 +11,10 @@ const Post = function(post) {
   };
 
 
-Post.create = (newpost, result) => {
+Post.create = (newPost, result) => {
   sql.query(
       'INSERT INTO posts SET ?',
-      [newpost],
+      [newPost],
       
       function (err, res) {
       if (err) {
@@ -22,8 +22,8 @@ Post.create = (newpost, result) => {
           result(err, null);
           return;
       }
-      console.log("post créé: ", { id: res.insertId, ...newpost });
-      result(null, { id: res.insertId, ...newpost });
+      console.log("post créé: ", { id: res.insertId, ...newPost });
+      result(null, { id: res.insertId, ...newPost });
       }
   );
 };
