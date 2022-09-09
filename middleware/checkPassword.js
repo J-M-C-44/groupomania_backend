@@ -24,18 +24,23 @@ passwordSchema
 */
 //ICIJCO : voir si tjs ok
 module.exports = (req, res, next) => {
-    if (passwordSchema.validate(req.body.password)) {
-        next();
-    } else {
-         res.status(400).json( { message : 'invalid password. Must contain 8 to 100 characters, upper and lowercase letters, 2 digits, 1 special (space is forbidden)'} )
-        // res.writeHead(
-        //     400,
-        //     '{"message":"invalid password. Must contain 8 to 100 characters, upper and lowercase letters, 2 digits, 1 special (space is forbidden)"}',
-        //     {
-        //         "content-type": "application/json",
-        //     }
-        // );
-        // res.end("Format de mot de passe incorrect");
-    }
-  };
+   
+    if (!passwordSchema.validate(req.body.password)) {
+        return res.status(400).json( { message : 'invalid password. Must contain 8 to 100 characters, upper and lowercase letters, 2 digits, 1 special (space is forbidden)'} )  
+    };
 
+    // en cas de modification de password 
+    if (req.body.oldPassword) {
+        if (req.body.oldPassword == req.body.password) {
+            return res.status(400).json( { message : 'new and old passwords must be different !'} )  
+        }
+        // controle déjà fait au signup mais conservé pour éviter injection
+        if (!passwordSchema.validate(req.body.oldPassword) ) {
+            return res.status(400).json( { message : 'invalid oldpassword. Must contain 8 to 100 characters, upper and lowercase letters, 2 digits, 1 special (space is forbidden)'} )  
+        } 
+    };
+
+    next();
+}
+     
+   

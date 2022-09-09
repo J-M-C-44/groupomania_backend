@@ -18,10 +18,15 @@ const MIME_TYPES = {
   'image/gif': 'gif',
   'image/webp': 'webp'
 };
+
 // enregistrement fichier dans dossier images sous la forme timestamp +id unique . extension (mimetype)
 const storage = multer.diskStorage({
   destination: (req, file, callback) => {
-    callback(null, 'images');
+      if (req.route.path === '/:id/profile') {
+        callback(null, 'images/user');
+      }  else {
+        callback(null, 'images/post');
+      }
   },
   filename: (req, file, callback) => {
     const extension = MIME_TYPES[file.mimetype];

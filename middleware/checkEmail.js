@@ -10,6 +10,9 @@ const emailValidator = require("email-validator");
 */
 //ICIJCO : voir si toujours OK
 module.exports = (req, res, next) => {
+    console.log(' --> req.body.email ',  req.body.email)
+    console.log(' --> req.body',  req.body)
+    
     if (emailValidator.validate(req.body.email)) {
         next();
     } else {

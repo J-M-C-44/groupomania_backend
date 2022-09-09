@@ -1,13 +1,14 @@
+// dans controllers
 'use strict';
 // <------------------------------------- imports --------------------------------------->
-//ICIJCO à compléter
-// models
-//const User = require('../models/user');
 
 // param
 const dotenv = require('dotenv').config('../.env');
     // console.log('dotenv : ', dotenv);
-    
+
+// mySQL - table users
+const User = require('../models/user')
+     
 // packages :
 //   - bcrypt : pour hasher le mot de passe du nouvel utilisateur
 //   - jwt : pour attribuer un token à l'utilisateur quand il se connecte
@@ -15,6 +16,8 @@ const dotenv = require('dotenv').config('../.env');
 const bcrypt = require('bcrypt'); 
 const jwt = require('jsonwebtoken');  
 const cryptojs = require("crypto-js");
+// fonction mutualisée de suppression de fichier
+const removeImageFile = require('../utils/removeFile');
 
 
 // <-------------------------------- Controller "signup" ------------------------------->
@@ -41,14 +44,23 @@ exports.signup = (req, res, next) => {
             console.log('cryptedEmail: ', cryptedEmail);
             const user = new User({
                 email: cryptedEmail,
-                password: hash
+                password: hash,
+                role : 0
             });
-            console.log('user: ', user);
-            //ICICJO 
-            // user.save()
-            //     .then(() => res.status(201).json({ message: 'user created' }))
-            //     .catch(error => res.status(400).json({ error }));
-            res.status(201).json({ message: 'user created' })
+            User.create(user, (error, data) => {
+                if (error) {
+                    if (error.errno == 1062) 
+                        res.status(400).json({ error })
+
+                    else 
+                        res.status(500).json({ error })
+                    ;
+                }                 
+                else {
+                    // console.log('data : ', data);
+                    res.status(201).json({ message: 'user created' })
+                }
+              });
         })
         .catch(error => res.status(500).json({ error }));
 };
@@ -69,34 +81,394 @@ exports.login = (req, res, next) => {
 
     // recherche de l'enregistrement dans la BDD User en utilisant l'email (préalablement crypté)
     const cryptedEmail = cryptojs.HmacSHA512(req.body.email, `${process.env.CRYPTOJS_SECRET_KEY}`).toString();
-    // ICIJCO : remplacer avec mysql
-    // User.findOne({ email: cryptedEmail })
-    //     .then(user => {
-    //         if (user === null) {
-    //             console.log('user non trouvé'); 
-    //             return res.status(401).json({ message: 'Incorrect username/password pair'});
-    //         }
-    //         // verification que le mot de passe et le hash dans BDD User correspondent, et on renvoie un Token chiffré
-    //         bcrypt.compare(req.body.password, user.password)
-    //             .then(valid => {
-    //                 if (!valid) {
-    //                     // console.log('user trouvé mais mots de passe différents'); 
-    //                     return res.status(401).json({ message: 'Incorrect username/password pair' });
-    //                 }
+    User.findByEmail (cryptedEmail , (error, user) => {
+
+        if (error) {
+            if (error.kind == 'not_found') { 
+                console.log('user non trouvé'); 
+                return res.status(401).json({ message: 'Incorrect username/password pair'});
+
+            } else 
+                return res.status(500).json({ error })
+            ;
+        } else {
+            // verification que le mot de passe et le hash dans BDD User correspondent, et on renvoie un Token chiffré
+            bcrypt.compare(req.body.password, user.password)
+                .then(valid => {
+                    if (!valid) {
+                        // console.log('user trouvé mais mots de passe différents'); 
+                        return res.status(401).json({ message: 'Incorrect username/password pair' });
+                    }
                     res.status(200).json({
-                        userId: user._id,
+                        id:         user.id,
+                        lastname:   user.lastname,
+                        firstname : user.firstname,
+                        fonction :  user.fonction,
+                        avatarUrl : user.avatarUrl,
+                        role :      user.role,
                         // on crée le token contenant le userId avec jwt
                         token: jwt.sign(
-                           { userId: user._id },
-                           process.env.TOKEN_SECRET,
-                           { expiresIn: '24h' }
+                            { userId: user.id },
+                            process.env.TOKEN_SECRET,
+                            { expiresIn: '24h' }
                         )
                     });
-    //             })
-    //             // si pb avec bcrypt
-    //             .catch(error => res.status(500).json({ error }));
-    //     })
-        // // si pb recherche bdd User
-        // .catch(error => res.status(400).json({ error }));
+                })
+                // si pb avec bcrypt
+                .catch(error => res.status(500).json({ error }));
+        }
+    });
 
 };
+
+exports.getOneUser= (req, res, next) => {
+    console.log('getOneUser');
+   
+    // recherche de l'enregistrement demandé en BDD user 
+        User.findById(req.params.id , (error, user) => {
+
+            if (error) {
+                console.log('pb user.findById (getOneUser) erreur : ', error);
+                if (error.kind == 'not_found') { 
+                    console.log('user non trouvé'); 
+                    return res.status(404).json({ message: 'user not found'});
+    
+                } else 
+                    return res.status(500).json({ error });
+            }
+            // on supprime les données sensibles
+            delete user.email ;
+            delete user.password; 
+            delete user.role ;
+            res.status(200).json(user)
+        });   
+};
+
+exports.getAllUsers= (req, res, next) => {
+    console.log('getAllUsers');
+   
+    // recherche de l'enregistrement demandé en BDD user 
+        User.findAll( (error, users) => {
+
+            if (error) {
+                console.log('pb user.findAll -  erreur : ', error);
+                if (error.kind == 'not_found') { 
+                    console.log('users non trouvés'); 
+                    return res.status(404).json({ message: 'users not found'});
+    
+                } else 
+                    return res.status(500).json({ error });
+            }
+            // on supprime les données sensibles
+            for (let user of users) {
+                delete user.email ;
+                delete user.password; 
+                delete user.role ;
+            }
+            res.status(200).json(users)
+        });   
+};
+
+
+exports.modifyProfile= (req, res, next) => {
+    console.log('modifyProfile');
+   // récupération de l'objet user 
+    const userObject = req.file ? {
+            ...JSON.parse(req.body.user),
+            avatarUrl: `${req.protocol}://${req.get('host')}/images/user/${req.file.filename}`
+        } : { ...req.body };
+
+    // pré-contrôle : le userID fourni doit correspondre à celui qui fait la demande
+    if ((userObject.id != req.auth.userId) || (req.params.id != req.auth.userId) ) {
+        console.log('! tentative piratage ? userObject.id = ', userObject.id, ' <> req.auth.userId =   ', req.auth.userId, '<> req.params.id = ', req.params.id  );
+        // on fait retour arrière sur l'éventuel fichier transmis
+        if (req.file) { 
+            removeImageFile(req.file.filename, 'user');
+        };
+        return res.status(403).json({ message : 'Not authorized'});
+
+    } else {
+    // recherche de l'enregistrement demandé en BDD user 
+        User.findById(req.params.id , (error, user) => {
+
+            if (error) {
+                console.log(' pb user.findById (modifyProfile); erreur : ', error);
+                // si pb, on fait retour arrière sur l'éventuel fichier transmis
+                if (req.file) { 
+                    removeImageFile(req.file.filename, 'user');
+                }
+                if (error.kind == 'not_found') { 
+                    console.log('user non trouvé'); 
+                    return res.status(404).json({ message: 'user not found'});
+    
+                } else 
+                    return res.status(500).json({ error });
+            }
+            
+            // mise à jour de l'enregistrement demandé en BDD user 
+            // sans nouveau fichier image transmis, on conserve l'URL initiale 
+            if (!req.file) {
+                userObject.avatarUrl = user.avatarUrl;
+            };
+
+            User.updateProfile (userObject , (error, result) => {
+        
+                if (error) {
+                    console.log(' pb user.updateProfile - erreur : ', error);
+                    // si pb, on fait retour arrière sur l'éventuel fichier transmis
+                    if (req.file) { 
+                        removeImageFile(req.file.filename, 'user');
+                    } 
+                    return res.status(500).json({ error });
+                }
+                // delete fichier précédent si besoin
+                if ( (req.file)  && (user.avatarUrl != null) ) {
+                    const oldFilename = user.avatarUrl.split("/images/user/")[1];
+                    removeImageFile(oldFilename, 'user');      
+                }
+                res.status(200).json({message : 'user modified'})
+            })
+        });   
+    }
+};
+
+
+
+exports.modifyPassword = (req, res, next) => {
+    console.log('modifyPassword');
+    if (req.params.id != req.auth.userId) {
+        console.log('! tentative piratage ? req.auth.userId =   ', req.auth.userId, '<> req.params.id = ', req.params.id  );
+        return res.status(403).json({ message : 'Not authorized'});
+
+    } else {
+        User.findById(req.params.id , (error, user) => {
+
+            if (error) {
+                console.log(' pb user.findById (modifyPassword); erreur : ', error);
+                if (error.kind == 'not_found') { 
+                    console.log('user non trouvé'); 
+                    return res.status(404).json({ message: 'user not found'});
+                } else 
+                    return res.status(500).json({ error });
+            }
+            // on vérifie que l'ancien mot de passe est correct 
+            bcrypt.compare(req.body.oldPassword, user.password)
+                .then(valid => {
+                    if (!valid) {
+                         console.log('user trouvé mais mots de passe différents'); 
+                        throw ({ message: 'Not authorized, verify old password' })
+                        //return res.status(403).json({ message: 'Not authorized, verify old password' });
+                        // ICIJCO !- revoir gestion res.status ?
+                        // res.status(403).json({ message: 'Not authorized, verify old password' });
+                        // throw error ;
+                    }
+                    const rounds = Number(process.env.HASH_NUMBER)
+                    return bcrypt.hash(req.body.password, rounds)
+                    
+                })
+                // MAJ BDD User avec le nv password hashé + retour réponse
+                .then(hash => {
+                    user.password = hash
+                    User.updatePassword (user , (error, result) => {
+                        if (error) {
+                            console.log(' pb user.updatepPassword - erreur : ', error);
+                            return res.status(500).json({ error });
+                        }
+                        res.status(200).json({message : 'password modified'})
+                    })
+                })
+               
+                // si pb avec bcrypt
+                .catch(error => res.status(500).json({ error }));
+            
+        });
+    };
+};
+
+
+exports.modifyEmail = (req, res, next) => {
+    console.log('modifyEmail');
+    if (req.params.id != req.auth.userId) {
+        console.log('! tentative piratage ? req.auth.userId =   ', req.auth.userId, '<> req.params.id = ', req.params.id  );
+        return res.status(403).json({ message : 'Not authorized'});
+
+    } else {
+        User.findById(req.params.id , (error, user) => {
+            if (error) {
+                console.log(' pb user.findById (modifyPassword); erreur : ', error);
+                if (error.kind == 'not_found') { 
+                    console.log('user non trouvé'); 
+                    return res.status(404).json({ message: 'user not found'});
+                } else 
+                    return res.status(500).json({ error });
+            }
+            // encryptage de l'adresse email / RGPD 
+            const cryptedEmail = cryptojs.HmacSHA512(req.body.email, `${process.env.CRYPTOJS_SECRET_KEY}`).toString();
+            console.log('cryptedEmail: ', cryptedEmail);
+            user.email = cryptedEmail
+            User.updateEmail (user , (error, result) => {
+                if (error) {
+                    console.log(' pb user.updatepEmail - erreur : ', error);
+                    if (error.errno == 1062) 
+                        return res.status(400).json({ error })
+                    else                  
+                        return res.status(500).json({ error });
+                }
+                res.status(200).json({message : 'Email modified'})
+            })
+
+        });
+    };
+};
+
+
+
+exports.deleteOneUser = (req, res, next) => {
+    console.log('deleteOneUser');
+    // ICIJCO : mettre contrôle id en middleware
+    // ICIJCO - penser à la cascade quand post, commentaires likes etc
+    if (req.params.id != req.auth.userId) {
+        console.log('! tentative piratage ? req.auth.userId =   ', req.auth.userId, '<> req.params.id = ', req.params.id  );
+        return res.status(403).json({ message : 'Not authorized'});
+
+    } else {
+        User.findById(req.params.id , (error, user) => {
+            if (error) {
+                console.log(' pb user.findById (deleteOneUser); erreur : ', error);
+                if (error.kind == 'not_found') { 
+                    console.log('user non trouvé'); 
+                    return res.status(404).json({ message: 'user not found'});
+                } else 
+                    return res.status(500).json({ error });
+            }
+
+            User.deleteB (user , (error, result) => {
+                if (error) {
+                    console.log(' pb user.delete - erreur : ', error);                  
+                    return res.status(500).json({ error });
+                }
+                if ( user.avatarUrl != null ) {
+                    const oldFilename = user.avatarUrl.split("/images/user/")[1];
+                    removeImageFile(oldFilename, 'user');      
+                }
+                res.status(200).json({message : 'user deleted'})
+            })
+
+        });
+    };
+};
+
+
+
+
+
+
+            // // sauvegarde avant reprise 
+            // //         // <-------------------------------- Controller "signup" ------------------------------->
+            // /**
+            //  * // ICIJCO: revoir commentaires
+            // * enregistrement d'un nouvel utilisateur à partir de l'email et password fournis
+            // *   - remarque : contrôle des entrées effectuées au préalable dans le middlewares checkEmail.js et checkPassword.js
+            // *   - haschage du mot de passe (bcrypt)
+            // *   - encryptage de l'adresse email (cryptojs)
+            // *   - création enregistrements dans la BDD User  
+            // *   - si ok : renvoie statut 201
+            // *   - si ko : renvoie statut 400 ou 500
+            // */
+            // exports.signup = (req, res, next) => {
+            //     console.log('signup');
+            // // haschage du mot de passe par bcrypt
+            // const rounds = Number(process.env.HASH_NUMBER)
+            // bcrypt.hash(req.body.password, rounds)
+            //     // création de l'enregistrement user dans la BDD User + retour réponse
+            //     .then(hash => {
+            //             console.log('hash: ', hash);
+            //         // encryptage de l'adresse email / RGPD 
+            //         const cryptedEmail = cryptojs.HmacSHA512(req.body.email, `${process.env.CRYPTOJS_SECRET_KEY}`).toString();
+            //         console.log('cryptedEmail: ', cryptedEmail);
+            //         const user = new User({
+            //             email: cryptedEmail,
+            //             password: hash
+            //         });
+            //         console.log('user: ', user);
+            //         //ICIJO 
+            //         user.create(user, (error, data) => {
+            //             if (error) {
+            //                 if (error.errno == 1062) 
+            //                     res.status(400).json({ error })
+
+            //                 else 
+            //                     res.status(500).json({ error })
+            //                 ;
+            //             }                 
+            //             else {
+            //                 // console.log('data : ', data);
+            //                 res.status(201).json({ message: 'user created' })
+            //             }
+            //             });
+            //         //user.create()
+            //         //     .then(() => res.status(201).json({ message: 'user created' }))
+            //         //     .catch(error => res.status(400).json({ error }));
+            //         // res.status(201).json({ message: 'user created' })
+            //     })
+            //     .catch(error => res.status(500).json({ error }));
+            // };
+
+
+            // // <-------------------------------- Controller "login" -------------------------------->
+            // /**
+            // *  * // ICIJCO: revoir commentaires
+            // * connexion d'un utilisateur à partir de l'email et password fournis
+            // *   - remarque : contrôle des entrées effectuées au préalable dans le middlewares checkEmail.js et checkPassword.js
+            // *   - recherche de l'enregistrement dans la BDD User en utilisant l'email (préalablement crypté)
+            // *   - verification que le mot de passe et le hash dans BDD User correspondent  
+            // *   - si ok : renvoie statut 201 avec un token chiffré contenant le userID (jwt)
+            // *   - si ko : renvoie statut 400, 401 ou 500
+            // */
+            // exports.login = (req, res, next) => {
+            // console.log('login : ', req.body.email);
+
+            // // recherche de l'enregistrement dans la BDD User en utilisant l'email (préalablement crypté)
+            // const cryptedEmail = cryptojs.HmacSHA512(req.body.email, `${process.env.CRYPTOJS_SECRET_KEY}`).toString();
+            // const user = new User({
+            //     email: cryptedEmail
+            // });
+            // user.findByEmail (user , (error, userData) => {
+
+            //     if (error) {
+            //         if (error.kind == 'not_found') { 
+            //             console.log('user non trouvé'); 
+            //             return res.status(401).json({ message: 'Incorrect username/password pair'});
+
+            //         } else 
+            //             return res.status(500).json({ error })
+            //         ;
+            //     }                 
+            //     else {
+            //         console.log('data findByEmail : ', userData);
+            //         // verification que le mot de passe et le hash dans BDD User correspondent, et on renvoie un Token chiffré
+            //         console.log('data req.body.password : ', req.body.password,);
+            //         console.log('user.password : ', userData.password);
+            //         bcrypt.compare(req.body.password, userData.password)
+            //             .then(valid => {
+            //                 if (!valid) {
+            //                     // console.log('user trouvé mais mots de passe différents'); 
+            //                     return res.status(401).json({ message: 'Incorrect username/password pair' });
+            //                 }
+            //                 console.log('avant jwt : ');
+            //                 res.status(200).json({
+            //                     userId: userData.id,
+            //                     // on crée le token contenant le userId avec jwt
+            //                     token: jwt.sign(
+            //                     { userId: userData.id },
+            //                     process.env.TOKEN_SECRET,
+            //                     { expiresIn: '24h' }
+            //                     )
+            //                 });
+            //             })
+            //             // si pb avec bcrypt
+            //             .catch(error => res.status(500).json({ error }));
+            //     }
+            //     });
+
+            // };

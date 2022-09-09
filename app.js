@@ -2,8 +2,11 @@
 
 // <------------------------------------- imports --------------------------------------->
 const express = require('express');  // framework d'application web pour node.js
-// ICIJCO à virer / remplacer 
-// const mongoose = require('mongoose'); // outil de modélisation d’object pour MongoDB
+
+//ICIJCO: à virer quand OK
+//const connection = require('./models/db');
+// mysql avec  promise : 
+// const mysql = require('mysql2/promise');
 const path = require('path'); // permet de gérer le chemin de fichier
 
 // Helmet : permet de sécuriser l'application express en configurant de manière appropriée les en-têtes HTTP
@@ -23,7 +26,9 @@ const nodemon = require('nodemon');
 
 // déclaration des routes
 const userRoutes = require('./routes/user');
-
+const postRoutes = require('./routes/post');
+const likeRoutes = require('./routes/like');
+const commentRoutes = require('./routes/comment');
 
 // création application express
 const app = express();
@@ -33,14 +38,33 @@ app.use(helmet({
   crossOriginResourcePolicy: false,
 }));
 
-//ICIJCO : intégrer connection mySQL + sequelize
-// connection à mongoDB Atlas (paramètres dans .env)
-// mongoose.connect(`mongodb+srv://${process.env.MONGODB_USER}:${process.env.MONGODB_PASSWORD}@${process.env.MONGODB_CLUSTER_NAME}.mongodb.net/${process.env.MONGODB_DATABASE_NAME}?retryWrites=true&w=majority`,
-//   { useNewUrlParser: true,
-//     useUnifiedTopology: true })
-//   .then(() => console.log('Connexion à MongoDB OK'))
-//   .catch(() => console.log('Connexion à MongoDB KO !'));
+// ICIJCO : à virer quand OK
+// let sql = "SELECT * FROM User" ;
+// connection.query (sql, function (err, results,fields) {
+//   console.log(results); // results contains rows returned by server
+//   // console.log(fields); // fields contains extra meta data about results, if available
+//   }
+// );
 
+//- ----------------intégrer connection mySQL avec promise
+// async function connect() {
+//   const connection = await mysql.createConnection({
+//     host: process.env.DB_HOST,
+//     user: process.env.DB_USER,
+//     password: process.env.DB_PASSWORD,
+//     database: process.env.DB_NAME   
+//   });
+//   let sql = "SELECT * FROM User" ;
+//   connection.query(sql)
+//       .then( results => console.log('resultat: ', results[0]))
+//       .catch( error => console.log('resultat: ', results))
+
+// }
+// connect();
+//- ------------------ fin intégrer connection mySQL avec promise
+
+
+console.log('ICIJCO: app.js')
 // gestion des headers // ICIJCO : voir si tjs ok et si ajout cors ?
 app.use((req, res, next) => {
     // ressources peuvent être partagées depuis n'importe quelle origine
@@ -64,6 +88,9 @@ app.use('/images', express.static(path.join(__dirname, 'images')));
 
 // 
 app.use('/api/auth', userRoutes);
-
+app.use('/api/user', userRoutes);
+app.use('/api/post', postRoutes);
+app.use('/api/like', likeRoutes);
+app.use('/api/comment', commentRoutes);
 // export pour utilisation par server.js
 module.exports = app;
