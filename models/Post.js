@@ -52,11 +52,57 @@ Post.findById = (id, result) => {
 
 };
 
+Post.findAllByUserId = (userId, result) => {
+    sql.query(
+        'SELECT * FROM posts WHERE userId = ? ORDER BY createdTime DESC',
+        [userId] ,
+  
+        function (err, res) {
+            if (err) {
+                console.log("error: ", err);
+                result(err, null);
+                return;
+            }
+            if (!res.length) {
+                // post non trouvé avec id
+                result({ kind: "not_found" }, null);
+                return;
+            }
+            console.log("posts trouvés: ", res);
+            result(null, res);
+      }
+    );
+  
+}
+
+
+Post.findAllLikedByUserId = (userId, result) => {
+    sql.query(
+        'SELECT * FROM posts JOIN likes ON posts.id = likes.id WHERE likes.userId = ? ORDER BY likes.modifiedTime DESC' ,
+        [userId] ,
+    
+        function (err, res) {
+            if (err) {
+                console.log("error: ", err);
+                result(err, null);
+                return;
+            }
+            if (!res.length) {
+                // post non trouvé avec id
+                result({ kind: "not_found" }, null);
+                return;
+            }
+            console.log("posts trouvés: ", res);
+            result(null, res);
+        }
+    );
+    
+}
 
 Post.findAll = (result) => {
 
   sql.query(
-      'SELECT * FROM posts',
+      'SELECT * FROM posts  ORDER BY modifiedTime DESC',
 
       function (err, res) {
           if (err) {

@@ -45,12 +45,12 @@ exports.addLike = (req, res, next) => {
                     postId :    post.id,
                     userId :    req.auth.userId
                 });
-                Like.create (newLike, (error, data) => {
+                Like.create (newLike, (error, createdLike) => {
                     if (error) {
                         return res.status(500).json({ error })
                     }                 
                     else {
-                        return res.status(201).json({ message: 'like created' })
+                        return res.status(201).json(createdLike)
                     }
                 });
             } else {
@@ -59,6 +59,52 @@ exports.addLike = (req, res, next) => {
         }); 
     })
 };
+
+
+exports.getAllLikesForOnePost = (req, res, next) => {
+    console.log('getAllLikesForOnePost');
+    Like.findAllByPost(req.params.id, (error, likes) => {
+        if (error) {
+            console.log(' pb like.findByPost (getAllLikesForOnePost); erreur : ', error);
+            if (error.kind == 'not_found') { 
+                console.log('like non trouvé'); 
+                return res.status(404).json({ message: 'Like not found for this post'});
+            } else 
+                return res.status(500).json({ error });
+        }
+    
+        res.status(200).json(likes)
+    })
+};
+
+exports.getAllLikesForOneUser = (req, res, next) => {
+    console.log('getAllLikesForOneUser');
+    Like.findAllByUser(req.params.id, (error, likes) => {
+        if (error) {
+            console.log(' pb like.findByUser (getAllLikesForOneUser); erreur : ', error);
+            if (error.kind == 'not_found') { 
+                console.log('like non trouvé'); 
+                return res.status(404).json({ message: 'Like not found for this user'});
+            } else 
+                return res.status(500).json({ error });
+        }
+    
+        res.status(200).json(likes)
+    })
+};
+
+exports.getCountLikesForOnePost = (req, res, next) => {
+    console.log('getCountLikesForOnePost');
+    Like.countByPost(req.params.id, (error, countLikes) => {
+        if (error) {
+            console.log(' pb like.countByPost (getCountLikesForOnePost); erreur : ', error);
+            return res.status(500).json({ error });
+        }
+    
+        res.status(200).json({"countLikes" : countLikes})
+    })
+};
+
 exports.deleteOneLike = (req, res, next) => {
     console.log('deleteOnelike');
     // ICIJCO - penser à la cascade quand post, commentaires likes etc
@@ -72,9 +118,9 @@ exports.deleteOneLike = (req, res, next) => {
             } else 
                 return res.status(500).json({ error });
         }
-        // vérfication que le demandeur est bien le propriétaire du like
-        if (like.userId != req.auth.userId) {
-            console.log('! tentative piratage ? req.auth.userId =   ', req.auth.userId, '<> post.userId = ', post.userId  );
+        // vérfication que le demandeur est bien le propriétaire du like (sauf administrateur)
+        if ( (like.userId != req.auth.userId) && !req.auth.roleIsAdmin ) {
+            console.log('! tentative piratage ? req.auth.userId =   ', req.auth.userId, '<> like.userId = ', like.userId  );
             return res.status(403).json({ message : 'Not authorized'});
         }
 
@@ -88,3 +134,5 @@ exports.deleteOneLike = (req, res, next) => {
 
     });
 };
+
+// ICIJCO: ajouter GEt by UserId, GEt by postId

@@ -73,7 +73,7 @@ exports.signup = (req, res, next) => {
 *   - remarque : contrôle des entrées effectuées au préalable dans le middlewares checkEmail.js et checkPassword.js
 *   - recherche de l'enregistrement dans la BDD User en utilisant l'email (préalablement crypté)
 *   - verification que le mot de passe et le hash dans BDD User correspondent  
-*   - si ok : renvoie statut 201 avec un token chiffré contenant le userID (jwt)
+*   - si ok : renvoie statut 201 avec un token chiffré contenant le userId (jwt)
 *   - si ko : renvoie statut 400, 401 ou 500
 */
 exports.login = (req, res, next) => {
@@ -108,7 +108,7 @@ exports.login = (req, res, next) => {
                         role :      user.role,
                         // on crée le token contenant le userId avec jwt
                         token: jwt.sign(
-                            { userId: user.id },
+                            { userId: user.id, userRole : user.role },
                             process.env.TOKEN_SECRET,
                             { expiresIn: '24h' }
                         )
@@ -177,9 +177,10 @@ exports.modifyProfile= (req, res, next) => {
             ...JSON.parse(req.body.user),
             avatarUrl: `${req.protocol}://${req.get('host')}/images/user/${req.file.filename}`
         } : { ...req.body };
+    
 
     // pré-contrôle : le userID fourni doit correspondre à celui qui fait la demande
-    if ((userObject.id != req.auth.userId) || (req.params.id != req.auth.userId) ) {
+    if (( (userObject.id != req.auth.userId) || (req.params.id != req.auth.userId)) && !req.auth.roleIsAdmin ) {
         console.log('! tentative piratage ? userObject.id = ', userObject.id, ' <> req.auth.userId =   ', req.auth.userId, '<> req.params.id = ', req.params.id  );
         // on fait retour arrière sur l'éventuel fichier transmis
         if (req.file) { 
@@ -207,9 +208,23 @@ exports.modifyProfile= (req, res, next) => {
             
             // mise à jour de l'enregistrement demandé en BDD user 
             // sans nouveau fichier image transmis, on conserve l'URL initiale 
-            if (!req.file) {
-                userObject.avatarUrl = user.avatarUrl;
-            };
+            // if (!req.file) {
+            //     userObject.avatarUrl = user.avatarUrl;
+            // };
+
+            // sans nouveau fichier image transmis et sans demande de suppression de l'image, on conserve l'URL initiale 
+            let oldAvatarToDelete = false
+            if (req.file) {
+                oldAvatarToDelete = true 
+            } else {
+                if (userObject.avatarUrl && userObject.avatarUrl == 'toDelete') {
+                    oldAvatarToDelete = true;
+                    userObject.avatarUrl = null;   
+                } else {
+                    userObject.avatarUrl = user.avatarUrl;
+                }
+            }
+
 
             User.updateProfile (userObject , (error, result) => {
         
@@ -222,7 +237,8 @@ exports.modifyProfile= (req, res, next) => {
                     return res.status(500).json({ error });
                 }
                 // delete fichier précédent si besoin
-                if ( (req.file)  && (user.avatarUrl != null) ) {
+                if (user.avatarUrl != null && oldAvatarToDelete ) {
+                // if ( (req.file)  && (user.avatarUrl != null) ) {
                     const oldFilename = user.avatarUrl.split("/images/user/")[1];
                     removeImageFile(oldFilename, 'user');      
                 }
@@ -288,7 +304,7 @@ exports.modifyPassword = (req, res, next) => {
 
 exports.modifyEmail = (req, res, next) => {
     console.log('modifyEmail');
-    if (req.params.id != req.auth.userId) {
+    if ((req.params.id != req.auth.userId) && !req.auth.roleIsAdmin ) {
         console.log('! tentative piratage ? req.auth.userId =   ', req.auth.userId, '<> req.params.id = ', req.params.id  );
         return res.status(403).json({ message : 'Not authorized'});
 
@@ -325,9 +341,9 @@ exports.modifyEmail = (req, res, next) => {
 
 exports.deleteOneUser = (req, res, next) => {
     console.log('deleteOneUser');
-    // ICIJCO : mettre contrôle id en middleware
+    // ICIJCO : mettre contrôle id en middleware ?
     // ICIJCO - penser à la cascade quand post, commentaires likes etc
-    if (req.params.id != req.auth.userId) {
+    if ((req.params.id != req.auth.userId) && !req.auth.roleIsAdmin ) {
         console.log('! tentative piratage ? req.auth.userId =   ', req.auth.userId, '<> req.params.id = ', req.params.id  );
         return res.status(403).json({ message : 'Not authorized'});
 
@@ -342,7 +358,7 @@ exports.deleteOneUser = (req, res, next) => {
                     return res.status(500).json({ error });
             }
 
-            User.deleteB (user , (error, result) => {
+            User.delete (user , (error, result) => {
                 if (error) {
                     console.log(' pb user.delete - erreur : ', error);                  
                     return res.status(500).json({ error });
@@ -357,118 +373,3 @@ exports.deleteOneUser = (req, res, next) => {
         });
     };
 };
-
-
-
-
-
-
-            // // sauvegarde avant reprise 
-            // //         // <-------------------------------- Controller "signup" ------------------------------->
-            // /**
-            //  * // ICIJCO: revoir commentaires
-            // * enregistrement d'un nouvel utilisateur à partir de l'email et password fournis
-            // *   - remarque : contrôle des entrées effectuées au préalable dans le middlewares checkEmail.js et checkPassword.js
-            // *   - haschage du mot de passe (bcrypt)
-            // *   - encryptage de l'adresse email (cryptojs)
-            // *   - création enregistrements dans la BDD User  
-            // *   - si ok : renvoie statut 201
-            // *   - si ko : renvoie statut 400 ou 500
-            // */
-            // exports.signup = (req, res, next) => {
-            //     console.log('signup');
-            // // haschage du mot de passe par bcrypt
-            // const rounds = Number(process.env.HASH_NUMBER)
-            // bcrypt.hash(req.body.password, rounds)
-            //     // création de l'enregistrement user dans la BDD User + retour réponse
-            //     .then(hash => {
-            //             console.log('hash: ', hash);
-            //         // encryptage de l'adresse email / RGPD 
-            //         const cryptedEmail = cryptojs.HmacSHA512(req.body.email, `${process.env.CRYPTOJS_SECRET_KEY}`).toString();
-            //         console.log('cryptedEmail: ', cryptedEmail);
-            //         const user = new User({
-            //             email: cryptedEmail,
-            //             password: hash
-            //         });
-            //         console.log('user: ', user);
-            //         //ICIJO 
-            //         user.create(user, (error, data) => {
-            //             if (error) {
-            //                 if (error.errno == 1062) 
-            //                     res.status(400).json({ error })
-
-            //                 else 
-            //                     res.status(500).json({ error })
-            //                 ;
-            //             }                 
-            //             else {
-            //                 // console.log('data : ', data);
-            //                 res.status(201).json({ message: 'user created' })
-            //             }
-            //             });
-            //         //user.create()
-            //         //     .then(() => res.status(201).json({ message: 'user created' }))
-            //         //     .catch(error => res.status(400).json({ error }));
-            //         // res.status(201).json({ message: 'user created' })
-            //     })
-            //     .catch(error => res.status(500).json({ error }));
-            // };
-
-
-            // // <-------------------------------- Controller "login" -------------------------------->
-            // /**
-            // *  * // ICIJCO: revoir commentaires
-            // * connexion d'un utilisateur à partir de l'email et password fournis
-            // *   - remarque : contrôle des entrées effectuées au préalable dans le middlewares checkEmail.js et checkPassword.js
-            // *   - recherche de l'enregistrement dans la BDD User en utilisant l'email (préalablement crypté)
-            // *   - verification que le mot de passe et le hash dans BDD User correspondent  
-            // *   - si ok : renvoie statut 201 avec un token chiffré contenant le userID (jwt)
-            // *   - si ko : renvoie statut 400, 401 ou 500
-            // */
-            // exports.login = (req, res, next) => {
-            // console.log('login : ', req.body.email);
-
-            // // recherche de l'enregistrement dans la BDD User en utilisant l'email (préalablement crypté)
-            // const cryptedEmail = cryptojs.HmacSHA512(req.body.email, `${process.env.CRYPTOJS_SECRET_KEY}`).toString();
-            // const user = new User({
-            //     email: cryptedEmail
-            // });
-            // user.findByEmail (user , (error, userData) => {
-
-            //     if (error) {
-            //         if (error.kind == 'not_found') { 
-            //             console.log('user non trouvé'); 
-            //             return res.status(401).json({ message: 'Incorrect username/password pair'});
-
-            //         } else 
-            //             return res.status(500).json({ error })
-            //         ;
-            //     }                 
-            //     else {
-            //         console.log('data findByEmail : ', userData);
-            //         // verification que le mot de passe et le hash dans BDD User correspondent, et on renvoie un Token chiffré
-            //         console.log('data req.body.password : ', req.body.password,);
-            //         console.log('user.password : ', userData.password);
-            //         bcrypt.compare(req.body.password, userData.password)
-            //             .then(valid => {
-            //                 if (!valid) {
-            //                     // console.log('user trouvé mais mots de passe différents'); 
-            //                     return res.status(401).json({ message: 'Incorrect username/password pair' });
-            //                 }
-            //                 console.log('avant jwt : ');
-            //                 res.status(200).json({
-            //                     userId: userData.id,
-            //                     // on crée le token contenant le userId avec jwt
-            //                     token: jwt.sign(
-            //                     { userId: userData.id },
-            //                     process.env.TOKEN_SECRET,
-            //                     { expiresIn: '24h' }
-            //                     )
-            //                 });
-            //             })
-            //             // si pb avec bcrypt
-            //             .catch(error => res.status(500).json({ error }));
-            //     }
-            //     });
-
-            // };

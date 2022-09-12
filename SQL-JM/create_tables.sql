@@ -31,7 +31,7 @@ CREATE TABLE posts (
 CREATE TABLE comments (
     id              INTEGER NOT NULL AUTO_INCREMENT PRIMARY KEY,
     userId          INTEGER NOT NULL,
-    postID          INTEGER NOT NULL,
+    postId          INTEGER NOT NULL,
     text            TEXT(1000) NOT NULL,
     imageUrl        VARCHAR(100),
     createdTime     DATETIME DEFAULT CURRENT_TIMESTAMP,
@@ -44,7 +44,7 @@ CREATE TABLE comments (
 CREATE TABLE likes (
     id              INTEGER NOT NULL AUTO_INCREMENT PRIMARY KEY,
     userId          INTEGER NOT NULL,
-    postID          INTEGER NOT NULL,
+    postId          INTEGER NOT NULL,
     createdTime     DATETIME DEFAULT CURRENT_TIMESTAMP,
     modifiedTime    DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 

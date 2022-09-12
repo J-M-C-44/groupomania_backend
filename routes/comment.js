@@ -7,14 +7,22 @@ const router = express.Router();
 // middleware :
 //  - authorize : pour vérifier l'authentification (via token jwt)
 //  - multer: pour gérer les fichiers entrants 
-const authorize = require("../middleware/authorize")
+const authorize = require("../middleware/authorize");
+const multer = require('../middleware/multer-config');
+const checkText = require('../middleware/checkText');
 
 // controllers
-const likeCtrl = require('../controllers/like');
+const commentCtrl = require('../controllers/comment');
 
-// remarque : ajout d'un like sur un post -> voir routes/post
+// remarque : voir routes/post pour --> ajout d'un commentaire sur un post, récupération des commenataires sur un post donné
 
-// // supression d'un like 
-// router.delete('/:id',       authorize,                      likeCtrl.deleteOneLike);
+// récupération du détail d'un commentaire
+router.get('/:id',              authorize,                      commentCtrl.getOneComment);
+// // récupération de tous les commentaires pour un post
+// router.get('/',              authorize,                      getAllCommentsForOnePost);
+// supression d'un commentaire
+router.delete('/:id', authorize,                    commentCtrl.deleteOneComment);
+// modification d'un commentaire
+router.put   ('/:id', authorize, multer, checkText, commentCtrl.modifyComment);
 
 module.exports = router;

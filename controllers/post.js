@@ -36,7 +36,7 @@ exports.createPost = (req, res, next) => {
         imageUrl:   postObject.imageUrl,
     });
 
-    Post.create(post, (error, data) => {
+    Post.create(post, (error, createdPost) => {
         if (error) {
             if (req.file) { 
                 removeImageFile(req.file.filename);
@@ -44,8 +44,7 @@ exports.createPost = (req, res, next) => {
             res.status(500).json({ error })
         }                 
         else {
-            // console.log('data : ', data);
-            res.status(201).json({ message: 'post created' })
+            res.status(201).json(createdPost)
         }
         });
 };
@@ -75,8 +74,8 @@ exports.modifyPost = (req, res, next) => {
                 return res.status(500).json({ error });
         }
 
-        // vérfication que le demandeur est bien le propriétaire du post 
-        if (post.userId != req.auth.userId) {
+        // vérfication que le demandeur est bien le propriétaire du post (sauf administrateur)
+        if ((post.userId != req.auth.userId) && !req.auth.roleIsAdmin ) {
             console.log('! tentative piratage ? post.userId = ', post.userId, ' <> req.auth.userId =   ', req.auth.userId);
             // on fait retour arrière sur l'éventuel fichier transmis
             if (req.file) { 
@@ -86,10 +85,22 @@ exports.modifyPost = (req, res, next) => {
         }
 
         // mise à jour de l'enregistrement demandé en BDD posts 
-        // sans nouveau fichier image transmis, on conserve l'URL initiale 
-        if (!req.file) {
-            postObject.imageUrl = post.imageUrl;
-        };
+        // sans nouveau fichier image transmis et sans demande de suppression de l'image, on conserve l'URL initiale 
+        let oldImageToDelete = false
+        if (req.file) {
+            oldImageToDelete = true 
+        } else {
+            if (postObject.imageUrl && postObject.imageUrl == 'toDelete') {
+                oldImageToDelete = true;
+                postObject.imageUrl = null;   
+            } else {
+                postObject.imageUrl = post.imageUrl;
+            }
+        }
+        //ICIJCO : faire ménage qu OK
+        // if (!req.file) {
+        //     postObject.imageUrl = post.imageUrl;
+        // };
         postObject.id = req.params.id ;
  
         Post.update(postObject , (error, result) => {
@@ -102,11 +113,14 @@ exports.modifyPost = (req, res, next) => {
                 } 
                 return res.status(500).json({ error });
             }
+            console.log('postObject.imageUrl : ', postObject.imageUrl)
+
             // delete fichier précédent si besoin
-            if ( (req.file)  && (post.imageUrl != null) ) {
+            if (post.imageUrl != null && oldImageToDelete ) {
                 const oldFilename = post.imageUrl.split("/images/post/")[1];
                 removeImageFile(oldFilename);      
             }
+
             res.status(200).json({message : 'post modified'})
         })
     }); 
@@ -118,7 +132,7 @@ exports.getOnePost = (req, res, next) => {
     Post.findById(req.params.id , (error, post) => {
 
         if (error) {
-            console.log(' pb post.findById (modifyPost); erreur : ', error);
+            console.log(' pb post.findById ; erreur : ', error);
             if (error.kind == 'not_found') { 
                 console.log('post non trouvé'); 
                 return res.status(404).json({ message: 'post not found'});
@@ -130,7 +144,44 @@ exports.getOnePost = (req, res, next) => {
     }); 
 } 
 
-       
+
+exports.getAllPostsForOneUser = (req, res, next) => {
+    console.log('getAllPostsForOneUser');
+    // recherche des enregistrements en BDD post pour le user demandé 
+    Post.findAllByUserId(req.params.id , (error, posts) => {
+
+        if (error) {
+            console.log(' pb Post.findAllByUserId (getAllPostsForOneUser); erreur : ', error);
+            if (error.kind == 'not_found') { 
+                console.log('post non trouvé'); 
+                return res.status(404).json({ message: 'post not found'});
+            } else 
+                return res.status(500).json({ error });
+        }
+
+        res.status(200).json(posts)
+    }); 
+} 
+
+exports.getAllLikedPostsForOneUser = (req, res, next) => {
+    console.log('getAllLikedPostsForOneUser');
+    // recherche des enregistrements en BDD post et like pour le user demandé 
+    Post.findAllLikedByUserId(req.params.id , (error, posts) => {
+
+        if (error) {
+            console.log(' pb Post.findAllLikedByUserId (getAllLikedPostsForOneUser); erreur : ', error);
+            if (error.kind == 'not_found') { 
+                console.log('post non trouvé'); 
+                return res.status(404).json({ message: 'post not found'});
+            } else 
+                return res.status(500).json({ error });
+        }
+
+        res.status(200).json(posts)
+    }); 
+} 
+
+
 exports.getAllPosts = (req, res, next) => {
     console.log('getAllPosts');
     // recherche de l'enregistrement demandé en BDD post  
@@ -168,8 +219,8 @@ exports.deleteOnePost = (req, res, next) => {
             } else 
                 return res.status(500).json({ error });
         }
-        // vérfication que le demandeur est bien le propriétaire du post 
-        if (post.userId != req.auth.userId) {
+        // vérfication que le demandeur est bien le propriétaire du post (sauf administrateur)
+        if ( (post.userId != req.auth.userId) && !req.auth.roleIsAdmin ) {
             console.log('! tentative piratage ? req.auth.userId =   ', req.auth.userId, '<> post.userId = ', post.userId  );
             return res.status(403).json({ message : 'Not authorized'});
         }

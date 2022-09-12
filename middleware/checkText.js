@@ -17,7 +17,12 @@ const charAndDigitTypeRegexpMax = new RegExp('^[a-zàâéèëêïîôùüûçœ@
 module.exports = (req, res, next) => {
     let postObject = {};
     if (req.file) {
-        postObject = JSON.parse(req.body.post);  
+        if(req.body.post) {
+            postObject = JSON.parse(req.body.post); 
+        } else {
+            postObject = JSON.parse(req.body.comment);
+        }
+         
     } else {
         postObject = req.body ;
     }

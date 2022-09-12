@@ -12,7 +12,7 @@ const authorize = require("../middleware/authorize")
 // controllers
 const likeCtrl = require('../controllers/like');
 
-// remarque : ajout d'un like sur un post -> voir routes/post
+// remarque :  voir routes/post pour -> ajout d'un like sur un post, récupération des likes sur un post donné
 
 // supression d'un like 
 router.delete('/:id', authorize, likeCtrl.deleteOneLike);

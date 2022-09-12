@@ -19,22 +19,33 @@ const checkProfileData = require('../middleware/checkProfileData');
 
 // controllers
 const userCtrl = require('../controllers/user');
+const postCtrl = require('../controllers/post');
+const commentCtrl = require('../controllers/comment');
+const likeCtrl = require('../controllers/like');
 
 // enregistrement d'un nouvel utilisateur
-router.post('/signup',      limiter.signupRate, checkEmail, checkPassword,  userCtrl.signup);
+router.post('/signup',          limiter.signupRate, checkEmail, checkPassword,  userCtrl.signup);
 // connexion d'un utilisateur existant
-router.post('/login',       limiter.loginRate,                              userCtrl.login);
+router.post('/login',           limiter.loginRate,                              userCtrl.login);
 // modification du profil d'un utilisateur existant
-router.put('/:id/profile',  authorize, multer, checkProfileData,            userCtrl.modifyProfile);
+router.put('/:id/profile',      authorize, multer, checkProfileData,            userCtrl.modifyProfile);
 // modification du password d'un utilisateur existant
-router.put('/:id/password', authorize, limiter.loginRate, checkPassword,    userCtrl.modifyPassword);
+router.put('/:id/password',     authorize, limiter.loginRate, checkPassword,    userCtrl.modifyPassword);
 // modification de l email d'un utilisateur existant
-router.put('/:id/email',    authorize, checkEmail,                          userCtrl.modifyEmail);
+router.put('/:id/email',        authorize, checkEmail,                          userCtrl.modifyEmail);
 // récupération du détail d'un utilisateur
-router.get('/:id',          authorize,                                      userCtrl.getOneUser);
+router.get('/:id',              authorize,                                      userCtrl.getOneUser);
 // ICIJCO nice to have - récupération de tous les utilisateurs
-router.get('/',             authorize,                                      userCtrl.getAllUsers);
+router.get('/',                 authorize,                                      userCtrl.getAllUsers);
+// récupération des posts pour un user
+router.get('/:id/posts/',        authorize,                                      postCtrl.getAllPostsForOneUser);
+// récupération des commentaires "liké" pour un user
+router.get('/:id/posts/liked/',  authorize,                                      postCtrl.getAllLikedPostsForOneUser);
+// récupération des commentaires pour un user
+router.get('/:id/comments/',     authorize,                                      commentCtrl.getAllCommentsForOneUser);
+// récupération des likes pour un user
+router.get('/:id/likes/',        authorize,                                      likeCtrl.getAllLikesForOneUser);
 // supression d'un utilisateur
-router.delete('/:id',       authorize,                                      userCtrl.deleteOneUser);
+router.delete('/:id',           authorize,                                      userCtrl.deleteOneUser);
 
 module.exports = router;

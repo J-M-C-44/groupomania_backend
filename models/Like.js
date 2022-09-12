@@ -73,6 +73,71 @@ Like.findByPostIdAndUserId = (postId, userId, result) => {
   );
 }
 
+Like.findAllByPost = (postId, result) => {
+
+  sql.query(
+      'SELECT * FROM likes WHERE postId = ?',
+      [postId],
+      function (err, res) {
+          if (err) {
+              console.log("error: ", err);
+              result(err, null);
+              return;
+          }
+          if (!res.length) {
+              // likes non trouvés
+              result({ kind: "not_found" }, null);
+              return;
+          }
+          console.log("likes trouvés: ", res);
+          result(null, res);
+    }
+  );
+
+};
+
+Like.findAllByUser = (userId, result) => {
+
+  sql.query(
+      'SELECT * FROM likes WHERE userId = ?',
+      [userId],
+      function (err, res) {
+          if (err) {
+              console.log("error: ", err);
+              result(err, null);
+              return;
+          }
+          if (!res.length) {
+              // likes non trouvés
+              result({ kind: "not_found" }, null);
+              return;
+          }
+          console.log("likes trouvés: ", res);
+          result(null, res);
+    }
+  );
+
+};
+
+Like.countByPost = (postId, result) => {
+
+  sql.query(
+      'SELECT COUNT(*) FROM likes WHERE postId = ?',
+      [postId],
+      function (err, res) {
+          if (err) {
+              console.log("error: ", err);
+              result(err, null);
+              return;
+          }
+
+          console.log("nb likes trouvés: ", res[0]['COUNT(*)']);
+          console.log("res.length ", res.length);
+          result(null, res[0]['COUNT(*)']);
+    }
+  );
+
+};
 
 Like.findAll = (result) => {
   sql.query(

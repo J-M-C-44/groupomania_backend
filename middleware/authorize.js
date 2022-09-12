@@ -20,13 +20,20 @@ module.exports = (req, res, next) => {
        const token = req.headers.authorization.split(' ')[1];
        const decodedToken = jwt.verify(token, process.env.TOKEN_SECRET);
        const userId = decodedToken.userId;
-       // on vérifie si on a un user id dans le body et si celui ci est le même que celui issu du token
-       // ICIJCO: revoir si tjs la bonne gestion
-       if (req.body.userId && req.body.userId !== userId) {
+       const userRole = decodedToken.userRole;
+       let roleIsAdmin = false
+       if (decodedToken.userRole == process.env.ROLE_ADMIN) {
+            roleIsAdmin = true
+       }
+        // on vérifie si on a un user id dans le body et si celui ci est le même que celui issu du token (sauf si c'est l'admin)
+        if ((req.body.userId && req.body.userId !== userId) &&  !roleIsAdmin) {
             throw "403: unauthorized request";
         } else { 
-            req.auth = { userId: userId };
-        };
+            req.auth = { 
+                userId: userId,
+                roleIsAdmin : roleIsAdmin    
+            };  
+         };
 
 	    next();
    } catch(error) {
