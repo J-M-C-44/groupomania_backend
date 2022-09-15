@@ -18,7 +18,8 @@ const jwt = require('jsonwebtoken');
 const cryptojs = require("crypto-js");
 // fonction mutualisée de suppression de fichier
 const removeImageFile = require('../utils/removeFile');
-
+const Post = require('../models/Post')
+const Comment = require('../models/Comment')
 
 // <-------------------------------- Controller "signup" ------------------------------->
 /**
@@ -47,18 +48,18 @@ exports.signup = (req, res, next) => {
                 password: hash,
                 role : 0
             });
-            User.create(user, (error, data) => {
+            User.create(user, (error, createdUser) => {
                 if (error) {
                     if (error.errno == 1062) 
-                        res.status(400).json({ error })
+                        res.status(400).json({ message: 'signup aborted, invalid email' })
 
                     else 
-                        res.status(500).json({ error })
+                        res.status(500).json({ message: 'signup aborted, internal error' })
                     ;
                 }                 
                 else {
-                    // console.log('data : ', data);
-                    res.status(201).json({ message: 'user created' })
+                    //console.log('data : ', createdUser);
+                    res.status(201).json({ message: 'user created', id : createdUser.id })
                 }
               });
         })
@@ -342,13 +343,12 @@ exports.modifyEmail = (req, res, next) => {
 exports.deleteOneUser = (req, res, next) => {
     console.log('deleteOneUser');
     // ICIJCO : mettre contrôle id en middleware ?
-    // ICIJCO - penser à la cascade quand post, commentaires likes etc
     if ((req.params.id != req.auth.userId) && !req.auth.roleIsAdmin ) {
         console.log('! tentative piratage ? req.auth.userId =   ', req.auth.userId, '<> req.params.id = ', req.params.id  );
         return res.status(403).json({ message : 'Not authorized'});
 
     } else {
-        User.findById(req.params.id , (error, user) => {
+        User.findById(req.params.id, async (error, user) => {
             if (error) {
                 console.log(' pb user.findById (deleteOneUser); erreur : ', error);
                 if (error.kind == 'not_found') { 
@@ -357,7 +357,12 @@ exports.deleteOneUser = (req, res, next) => {
                 } else 
                     return res.status(500).json({ error });
             }
-
+            // la suppression du user va déclencher la supression des posts, likes et commentaires correspondants (via la cascade SQL). 
+            // Par contre les fichiers images des posts et commentaires ne seront pas supprimés automatiquement, 
+            //  --> il faut récupérer leurs noms en BDD pour pouvoir les supprimer après.
+            let imagesFiles = await retrieveImagesFilesPostsAndComments(user.id)
+            console.log('ImagesFiles2 : ', imagesFiles)
+            // on supprime de la bdd
             User.delete (user , (error, result) => {
                 if (error) {
                     console.log(' pb user.delete - erreur : ', error);                  
@@ -367,9 +372,50 @@ exports.deleteOneUser = (req, res, next) => {
                     const oldFilename = user.avatarUrl.split("/images/user/")[1];
                     removeImageFile(oldFilename, 'user');      
                 }
+                // suppression des fichiers "en cascade"
+                for (let imageUrl of imagesFiles) {
+                    let oldFilename = imageUrl.split("/images/post/")[1];
+                    removeImageFile(oldFilename)
+                }
                 res.status(200).json({message : 'user deleted'})
             })
-
-        });
+        })          
     };
+};
+
+
+function retrieveImagesFilesPostsAndComments (userId) {
+   
+     return new Promise((resolve, reject) => {
+        Post.findAllImagesByUserId(userId, (error, ImagesFilesonPostByUser) => {
+            if (error) {
+                console.log(' pb findAllImagesByUserId (deleteOnPost); erreur : ', error);
+                reject([]);
+            }
+            
+            Comment.findAllImagesByUserId(userId, (error, ImagesFilesonCommentbyUser) => {
+                if (error) {
+                    console.log(' pb findAllImagesByUserId (deleteOnPost); erreur : ', error);
+                    reject([]);
+                }
+                Comment.findAllImagesOnPostbyUserId(userId, (error, ImagesFilesCommentonPostByUser) => {
+                    if (error) {
+                        console.log(' pb findAllImagesOnPostbyUserId (deleteOnPost); erreur : ', error);
+                        reject([]);
+                    }
+                    //on concatene tous les resultats de requetes
+                    const ImagesFilesPostsAndComments = [].concat(ImagesFilesonPostByUser, ImagesFilesonCommentbyUser, ImagesFilesCommentonPostByUser)
+                    // on ne garde que la valeur de l'imageUrl
+                    let newArray = []
+                    for (let item of ImagesFilesPostsAndComments) {
+                        newArray.push(item.imageUrl)
+                    }
+                    // on dédoublonne 
+                    const ImagesFiles = [...new Set(newArray)]
+                    resolve(ImagesFiles);
+
+                });
+            });
+        });
+     })
 };

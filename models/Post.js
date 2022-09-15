@@ -122,6 +122,26 @@ Post.findAll = (result) => {
 
 };
 
+
+Post.findAllImagesByUserId = (userId, result) => {
+    sql.query(
+        'SELECT imageUrl FROM posts WHERE userId = ? and imageUrl <> ?',
+        [userId,'NULL'] ,
+  
+        function (err, res) {
+            if (err) {
+                console.log("error: ", err);
+                result(err, null);
+                return;
+            }
+
+            console.log("images posts trouvées: ", res);
+            result(null, res);
+      }
+    );
+  
+}
+
 Post.update = (post, result) => {
   sql.query(
       'UPDATE posts SET text = ?, imageUrl = ? where id = ?',

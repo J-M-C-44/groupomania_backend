@@ -72,6 +72,7 @@ User.findById = (id, result) => {
               result({ kind: "not_found" }, null);
               return;
           }
+          console.log("users trouvés: ", res)
           console.log("user trouvé: ", res[0]);
           result(null, res[0]);
     }

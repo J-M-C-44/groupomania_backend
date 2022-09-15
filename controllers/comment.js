@@ -85,6 +85,7 @@ exports.getOneComment = (req, res, next) => {
 
 exports.getAllCommentsForOnePost = (req, res, next) => {
     console.log('getAllCommentsForOnePost');
+    // ICIJCO : remplacer post par postID
     Comment.findAllByPost(req.params.id, (error, comments) => {
         if (error) {
             console.log(' pb comment.findByPost (getAllCommentsForOnePost); erreur : ', error);

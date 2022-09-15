@@ -99,6 +99,62 @@ Comment.findAllByUser = (userId, result) => {
 
 };
 
+Comment.findAllImagesByUserId = (userId, result) => {
+
+  sql.query(
+      'SELECT imageUrl FROM comments WHERE userId = ? and imageUrl <> ?',
+      [userId,'NULL'] ,
+
+      function (err, res) {
+          if (err) {
+              console.log("error: ", err);
+              result(err, null);
+              return;
+          }
+          console.log("images commentaires userId trouvés: ", res);
+          result(null, res);
+    }
+  );
+
+};
+
+Comment.findAllImagesOnPostbyUserId = (userId, result) => {
+
+  sql.query(
+      'SELECT comments.imageUrl FROM comments JOIN posts ON comments.postID = posts.id  WHERE comments.imageUrl <> ?  and posts.userId = ?',
+      ['NULL', userId] ,
+
+      function (err, res) {
+          if (err) {
+              console.log("error: ", err);
+              result(err, null);
+              return;
+          }
+          console.log("images commentaires sur post d'un userid trouvés: ", res);
+          result(null, res);
+    }
+  );
+
+};
+
+Comment.findAllImagesByPostId = (postId, result) => {
+
+  sql.query(
+      'SELECT imageUrl FROM comments where postId = ? and imageUrl <> ?',
+      [postId,'NULL'],
+      function (err, res) {
+          if (err) {
+              console.log("error: ", err);
+              result(err, null);
+              return;
+          }
+          console.log("images commentaires trouvés: ", res);
+          result(null, res);
+    }
+  );
+
+};
+
 Comment.update = (comment, result) => {
   sql.query(
       'UPDATE comments SET text = ?, imageUrl = ? where id = ?',

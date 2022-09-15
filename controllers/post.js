@@ -8,6 +8,7 @@ const dotenv = require('dotenv').config('../.env');
   
 // mySQL - table posts
 const Post = require('../models/Post')
+const Comment = require('../models/Comment') 
    
 // packages :
 // fonction mutualisée de suppression de fichier
@@ -208,7 +209,6 @@ exports.getAllPosts = (req, res, next) => {
 
 exports.deleteOnePost = (req, res, next) => {
     console.log('deleteOnePost');
-    // ICIJCO - penser à la cascade quand post, commentaires likes etc
 
     Post.findById(req.params.id , (error, post) => {
         if (error) {
@@ -225,17 +225,33 @@ exports.deleteOnePost = (req, res, next) => {
             return res.status(403).json({ message : 'Not authorized'});
         }
 
-        Post.delete (post , (error, result) => {
+        // la suppression du post va déclencher la supression des commentaires correspondants (via la cascade SQL). 
+        // Par contre les fichiers images des commentaires ne seront pas supprimés automatiquement, 
+        //  --> il faut récupérer leurs noms en BDD pour pouvoir les supprimer après.
+        Comment.findAllImagesByPostId(post.id, (error, ImagesFilesCommentonPost) => {
             if (error) {
-                console.log(' pb post.delete - erreur : ', error);                  
-                return res.status(500).json({ error });
+                console.log(' pb comment.findAllImagesByPostId (deleteOnPost); erreur : ', error);
+                ImagesFilesCommentonPost = [] ;
             }
-            // on supprime le fichier image si il existe
-            if ( post.imageUrl != null ) {
-                const oldFilename = post.imageUrl.split("/images/post/")[1];
-                removeImageFile(oldFilename);      
-            }
-            res.status(200).json({message : 'post deleted'})
+
+            Post.delete (post , (error, result) => {
+                if (error) {
+                    console.log(' pb post.delete - erreur : ', error);                  
+                    return res.status(500).json({ error });
+                }
+                // on supprime le fichier image du post si il existe
+                if ( post.imageUrl != null ) {
+                    const oldFilename = post.imageUrl.split("/images/post/")[1];
+                    removeImageFile(oldFilename);      
+                }
+    
+                // on supprime les fichiers des commentaires "en cascade"
+                for (let item of ImagesFilesCommentonPost) {
+                    let oldFilename = item.imageUrl.split("/images/post/")[1];
+                    removeImageFile(oldFilename)
+                }
+                res.status(200).json({message : 'post deleted'})
+            })  
         })
 
     });

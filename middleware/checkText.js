@@ -15,21 +15,21 @@ const charAndDigitTypeRegexpMax = new RegExp('^[a-zàâéèëêïîôùüûçœ@
 *   - si KO : suppression du fichier éventuellement transmis et renvoi statut 400 
 */
 module.exports = (req, res, next) => {
-    let postObject = {};
+    let transmittedObject = {};
     if (req.file) {
         if(req.body.post) {
-            postObject = JSON.parse(req.body.post); 
+            transmittedObject = JSON.parse(req.body.post); 
         } else {
-            postObject = JSON.parse(req.body.comment);
+            transmittedObject = JSON.parse(req.body.comment);
         }
          
     } else {
-        postObject = req.body ;
+        transmittedObject = req.body ;
     }
 
     // check text
-    if (charAndDigitTypeRegexpMax.test(postObject.text) == false ) {
-        console.log('text invalid : ', postObject.text);
+    if (charAndDigitTypeRegexpMax.test(transmittedObject.text) == false ) {
+        console.log('text invalid : ', transmittedObject.text);
         // si un fichier a été transmis, on le supprime
         if (req.file) { 
             removeImageFile(req.file.filename);
