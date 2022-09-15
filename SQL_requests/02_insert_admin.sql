@@ -1,2 +1,2 @@
 -- insert into users (email, password, role)  values ('emailadmin@groupomania.com','pwD12345!','99');
- insert into users (email, password, role)  values ('a815715d42e016220a209fc6c4e920a0c9dc9160b11a5465c5ab59a6f68b78c484a967306a0932b0a73132dd7cb6f0eb593a1951027a47d36b710fac78dedb49','$2b$10$HX3x/8tUr8gUFUEsX7o9nOzpbw/Hw7oIMCdDSflydl4pYMkffO9pG','99');
+ insert into users (email, password, role)  values ('emailadmin@groupomania.com','$2b$10$HX3x/8tUr8gUFUEsX7o9nOzpbw/Hw7oIMCdDSflydl4pYMkffO9pG','99');

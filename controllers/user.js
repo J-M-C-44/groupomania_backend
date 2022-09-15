@@ -15,7 +15,7 @@ const User = require('../models/user')
 //   - cryptojs : pour crypter l'adresse email dans la BDD
 const bcrypt = require('bcrypt'); 
 const jwt = require('jsonwebtoken');  
-const cryptojs = require("crypto-js");
+//const cryptojs = require("crypto-js");
 // fonction mutualisée de suppression de fichier
 const removeImageFile = require('../utils/removeFile');
 const Post = require('../models/Post')
@@ -27,7 +27,6 @@ const Comment = require('../models/Comment')
 * enregistrement d'un nouvel utilisateur à partir de l'email et password fournis
 *   - remarque : contrôle des entrées effectuées au préalable dans le middlewares checkEmail.js et checkPassword.js
 *   - haschage du mot de passe (bcrypt)
-*   - encryptage de l'adresse email (cryptojs)
 *   - création enregistrements dans la BDD User  
 *   - si ok : renvoie statut 201
 *   - si ko : renvoie statut 400 ou 500
@@ -41,10 +40,11 @@ exports.signup = (req, res, next) => {
         .then(hash => {
              console.log('hash: ', hash);
             // encryptage de l'adresse email / RGPD 
-            const cryptedEmail = cryptojs.HmacSHA512(req.body.email, `${process.env.CRYPTOJS_SECRET_KEY}`).toString();
-            console.log('cryptedEmail: ', cryptedEmail);
+            // const cryptedEmail = cryptojs.HmacSHA512(req.body.email, `${process.env.CRYPTOJS_SECRET_KEY}`).toString();
+            // console.log('cryptedEmail: ', cryptedEmail);
             const user = new User({
-                email: cryptedEmail,
+                // email: cryptedEmail,
+                 email: req.body.email,
                 password: hash,
                 role : 0
             });
@@ -81,9 +81,9 @@ exports.login = (req, res, next) => {
     console.log('login : ', req.body.email);
 
     // recherche de l'enregistrement dans la BDD User en utilisant l'email (préalablement crypté)
-    const cryptedEmail = cryptojs.HmacSHA512(req.body.email, `${process.env.CRYPTOJS_SECRET_KEY}`).toString();
-    User.findByEmail (cryptedEmail , (error, user) => {
-
+    //const cryptedEmail = cryptojs.HmacSHA512(req.body.email, `${process.env.CRYPTOJS_SECRET_KEY}`).toString();
+    //User.findByEmail (cryptedEmail , (error, user) => {
+    User.findByEmail (req.body.email , (error, user) => {
         if (error) {
             if (error.kind == 'not_found') { 
                 console.log('user non trouvé'); 
@@ -320,14 +320,14 @@ exports.modifyEmail = (req, res, next) => {
                     return res.status(500).json({ error });
             }
             // encryptage de l'adresse email / RGPD 
-            const cryptedEmail = cryptojs.HmacSHA512(req.body.email, `${process.env.CRYPTOJS_SECRET_KEY}`).toString();
-            console.log('cryptedEmail: ', cryptedEmail);
-            user.email = cryptedEmail
+            //const cryptedEmail = cryptojs.HmacSHA512(req.body.email, `${process.env.CRYPTOJS_SECRET_KEY}`).toString();
+            //user.email = cryptedEmail
+            user.email = req.body.email;
             User.updateEmail (user , (error, result) => {
                 if (error) {
                     console.log(' pb user.updatepEmail - erreur : ', error);
                     if (error.errno == 1062) 
-                        return res.status(400).json({ error })
+                        return res.status(400).json({ message: 'email modification aborted, invalid email (duplic)' })
                     else                  
                         return res.status(500).json({ error });
                 }

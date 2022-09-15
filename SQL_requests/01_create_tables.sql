@@ -4,7 +4,7 @@ USE groupomania;
 
 CREATE TABLE users (
     id              INTEGER NOT NULL AUTO_INCREMENT PRIMARY KEY,
-    email           VARCHAR(200) NOT NULL UNIQUE,
+    email           VARCHAR(60) NOT NULL UNIQUE,
     password        VARCHAR(200) NOT NULL,
     lastname        VARCHAR(60),
     firstname       VARCHAR(60),
