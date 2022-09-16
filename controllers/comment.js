@@ -15,9 +15,13 @@ const removeImageFile = require('../utils/removeFile');
 
 
 
-// <-------------------------------- Controller "createComment" ------------------------------->
+// <-------------------------------- Controller "addOnecomment" ------------------------------->
 /**
- * // ICIJCO: revoir commentaires
+* ajout d'un commentaire sur un post donné 
+*   - remarque : contrôle des entrées effectuées au préalable dans middlewares
+*   - on vérifie que le post existe bien
+*   - si ok : renvoie statut 201
+*   - si ko : renvoie statut 404 ou 500
 */
 exports.addOnecomment = (req, res, next) => {
     console.log('addComment');
@@ -62,7 +66,12 @@ exports.addOnecomment = (req, res, next) => {
     })
 };
 
-
+// <-------------------------------- Controller "getOneComment" ------------------------------->
+/**
+* récupération des informations d'un commenataire donné
+*   - si ok : renvoie statut 200 et données
+*   - si ko : renvoie statut 404 ou 500
+*/ 
 exports.getOneComment = (req, res, next) => {
     console.log('getOneComment');
 
@@ -82,11 +91,15 @@ exports.getOneComment = (req, res, next) => {
     })
 }; 
 
-
+// <-------------------------------- Controller "getAllCommentsForOnePost" ------------------------------->
+/**
+* récupération de l'ensemble des commenataires d'un post donné
+*   - si ok : renvoie statut 200 et données
+*   - si ko : renvoie statut 404 ou 500
+*/ 
 exports.getAllCommentsForOnePost = (req, res, next) => {
     console.log('getAllCommentsForOnePost');
-    // ICIJCO : remplacer post par postID
-    Comment.findAllByPost(req.params.id, (error, comments) => {
+    Comment.findAllByPostId(req.params.id, (error, comments) => {
         if (error) {
             console.log(' pb comment.findByPost (getAllCommentsForOnePost); erreur : ', error);
             if (error.kind == 'not_found') { 
@@ -100,7 +113,12 @@ exports.getAllCommentsForOnePost = (req, res, next) => {
     })
 };
 
-
+// <-------------------------------- Controller "getAllCommentsForOneUser" ------------------------------->
+/**
+* récupération de l'ensemble des commentaires créés par un utilisateur donné
+*   - si ok : renvoie statut 200 et données
+*   - si ko : renvoie statut 404 ou 500
+*/ 
 exports.getAllCommentsForOneUser = (req, res, next) => {
     console.log('getAllCommentsForOnePost');
     Comment.findAllByUser(req.params.id, (error, comments) => {
@@ -117,7 +135,14 @@ exports.getAllCommentsForOneUser = (req, res, next) => {
     })
 
 };
-
+// <-------------------------------- Controller "modifyComment" ------------------------------->
+/**
+* modification des informations d'un commentaire donné.
+*   - remarque : contrôle des entrées efffectué au préalable dans middleware
+*   - seul son propriétaire et l'administrateur sont autorisés à modifier le commentaire 
+*   - si ok : renvoie statut 200 (et on supprime l'ancien fichier le cas échéant)
+*   - si ko : renvoie statut 403, 404 ou 500 (et on supprime le fichier transmis le cas échéant)
+*/
 exports.modifyComment = (req, res, next) => {
     console.log('modifyComment');
     // récupération des données dans la requete
@@ -180,10 +205,15 @@ exports.modifyComment = (req, res, next) => {
     }); 
 } 
 
-
+// <-------------------------------- Controller "deleteOneComment" ------------------------------->
+/**
+* suppression d'un commentaire donné.
+*   - seul son propriétaire et l'administrateur sont autorisés à supprimer un commentaire
+*   - si ok : renvoie statut 200
+*   - si ko : renvoie statut 403, 404 ou 500
+*/
 exports.deleteOneComment = (req, res, next) => {
     console.log('deleteOnecomment');
-    // ICIJCO - penser à la cascade quand post, commentaires likes etc
 
     Comment.findById(req.params.id , (error, comment) => {
         if (error) {

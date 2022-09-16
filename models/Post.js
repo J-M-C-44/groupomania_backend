@@ -1,7 +1,10 @@
 // dans models
 'use strict';
 
+// <------------------------------------- imports --------------------------------------->
 const sql = require('./db');
+
+// <------------------------- gestion des requtes MySQL / table posts ------------------->
 
 // constructeur
 const Post = function(post) {
@@ -11,6 +14,11 @@ const Post = function(post) {
   };
 
 
+/**
+* insert un nouvel enregistrement post dans la table posts 
+* @param { Object } newPost - nouvel enregistement post
+* @return { Object } result - enregistrement post créé avec id correspondant  // ou erreur
+*/
 Post.create = (newPost, result) => {
   sql.query(
       'INSERT INTO posts SET ?',
@@ -28,6 +36,11 @@ Post.create = (newPost, result) => {
   );
 };
 
+/**
+* recherche des enregistrements dans la table posts pour un id donné 
+* @param { String } id - id à rechercher
+* @return { Array } result - 1er résultat de la requete    // ou erreur
+*/
 Post.findById = (id, result) => {
   console.log("id: ", id);
   sql.query(
@@ -52,6 +65,11 @@ Post.findById = (id, result) => {
 
 };
 
+/**
+* recherche des enregistrements dans la table posts pour un user donné 
+* @param { String } user.id - id du user à rechercher
+* @return { Array } result - résultat de la requete    // ou erreur
+*/
 Post.findAllByUserId = (userId, result) => {
     sql.query(
         'SELECT * FROM posts WHERE userId = ? ORDER BY createdTime DESC',
@@ -75,7 +93,11 @@ Post.findAllByUserId = (userId, result) => {
   
 }
 
-
+/**
+* recherche des enregistrements dans la table posts des différents posts liké par un user donné  (jointure posts / likes)
+* @param { String } user.id - id du user à rechercher
+* @return { Array } result - résultat de la requete    // ou erreur
+*/
 Post.findAllLikedByUserId = (userId, result) => {
     sql.query(
         'SELECT * FROM posts JOIN likes ON posts.id = likes.id WHERE likes.userId = ? ORDER BY likes.modifiedTime DESC' ,
@@ -98,7 +120,10 @@ Post.findAllLikedByUserId = (userId, result) => {
     );
     
 }
-
+/**
+* recherche de tous les enregistrements dans la table posts (sans pagination)
+* @return { Array } result - résultat de la requete    // ou erreur
+*/
 Post.findAll = (result) => {
 
   sql.query(
@@ -122,6 +147,12 @@ Post.findAll = (result) => {
 
 };
 
+/** 
+* recherche de tous les enregistrements dans la table posts (avec pagination)
+* @param { String } limit- limit (nb d'enregistrements max à ramaner)
+* @param { String } offset - (nb d'enregistrements à bypasser)
+* @return { Array } result - résultat de la requete    // ou erreur
+*/
 Post.findAllPaginated = (limit, offset, result) => {
 
     sql.query(
@@ -146,7 +177,11 @@ Post.findAllPaginated = (limit, offset, result) => {
   
   };
 
-
+/** 
+* recherche dans la table posts de tous les imagesUrl renseignées  pour un user donné
+* @param { String } user.id - id du user à rechercher
+* @return { Array } result - résultat de la requete    // ou erreur
+*/
 Post.findAllImagesByUserId = (userId, result) => {
     sql.query(
         'SELECT imageUrl FROM posts WHERE userId = ? and imageUrl <> ?',
@@ -165,7 +200,10 @@ Post.findAllImagesByUserId = (userId, result) => {
     );
   
 }
-
+/** 
+* recherche dans la table posts du nombre total d'enregistrements
+* @return { Array } result - total    // ou erreur
+*/
 Post.count = (result) => {
 
     sql.query(
@@ -183,6 +221,11 @@ Post.count = (result) => {
   
   };
 
+/**
+* modification de donnés dans la table posts pour un post donné 
+* @param { Object } post - object post contenant les différentes données à mettre à jour et l'id recherché
+* @return { Array } result - résultat de la requete ou "not_found"    // ou erreur
+*/
 Post.update = (post, result) => {
   sql.query(
       'UPDATE posts SET text = ?, imageUrl = ? where id = ?',
@@ -206,7 +249,11 @@ Post.update = (post, result) => {
 
 };
 
- 
+/**
+* suppression d'un enregistrement dans la table posts pour un post donné 
+* @param { String } post.id - id du post à supprimer
+* @return { Array } result - résultat de la requete     // ou erreur
+*/ 
 Post.delete = (post, result) => {
   sql.query(
       'DELETE FROM posts WHERE ID = ?',

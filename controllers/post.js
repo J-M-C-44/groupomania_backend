@@ -17,11 +17,12 @@ const removeImageFile = require('../utils/removeFile');
 
 
 
-// evaluatePost;
-
 // <-------------------------------- Controller "createPost" ------------------------------->
 /**
- * // ICIJCO: revoir commentaires
+* enregistrement d'un nouveau post dans la BDD posts
+*   - remarque : contrôle des entrées effectuées au préalable dans middlewares
+*   - si ok : renvoie statut 201
+*   - si ko : renvoie statut 500
 */
 exports.createPost = (req, res, next) => {
     console.log('createPost');
@@ -50,6 +51,14 @@ exports.createPost = (req, res, next) => {
         });
 };
 
+// <-------------------------------- Controller "modifyPost" ------------------------------->
+/**
+* modifications des informations d'un post donné.
+*   - remarque : contrôle des entrées efffectué au préalable dans le middleware checkProfileData
+*   - seul son propriétaire et l'administrateur sont autorisés à modifier le post  
+*   - si ok : renvoie statut 200 (et on supprime l'ancien fichier le cas échéant)
+*   - si ko : renvoie statut 403, 404 ou 500 (et on supprime le fichier transmis le cas échéant)
+*/
 exports.modifyPost = (req, res, next) => {
     console.log('modifyPost');
     // récupération des données dans la requete
@@ -98,10 +107,6 @@ exports.modifyPost = (req, res, next) => {
                 postObject.imageUrl = post.imageUrl;
             }
         }
-        //ICIJCO : faire ménage qu OK
-        // if (!req.file) {
-        //     postObject.imageUrl = post.imageUrl;
-        // };
         postObject.id = req.params.id ;
  
         Post.update(postObject , (error, result) => {
@@ -126,7 +131,13 @@ exports.modifyPost = (req, res, next) => {
         })
     }); 
 } 
-        
+
+// <-------------------------------- Controller "getOnePost" ------------------------------->
+/**
+* récupération des informations d'un post à partir son id
+*   - si ok : renvoie statut 200 et données
+*   - si ko : renvoie statut 404 ou 500
+*/      
 exports.getOnePost = (req, res, next) => {
     console.log('getOnePost');
     // recherche de l'enregistrement demandé en BDD post  
@@ -145,7 +156,12 @@ exports.getOnePost = (req, res, next) => {
     }); 
 } 
 
-
+// <-------------------------------- Controller "getAllPostsForOneUser" ------------------------------->
+/**
+* récupération des informations d'un post créé par un user ID donné
+*   - si ok : renvoie statut 200 et données
+*   - si ko : renvoie statut 404 ou 500
+*/ 
 exports.getAllPostsForOneUser = (req, res, next) => {
     console.log('getAllPostsForOneUser');
     // recherche des enregistrements en BDD post pour le user demandé 
@@ -164,6 +180,12 @@ exports.getAllPostsForOneUser = (req, res, next) => {
     }); 
 } 
 
+// <-------------------------------- Controller "getAllLikedPostsForOneUser" ------------------------------->
+/**
+* récupération des informations des posts likés par un user donné
+*   - si ok : renvoie statut 200 et données
+*   - si ko : renvoie statut 404 ou 500
+*/ 
 exports.getAllLikedPostsForOneUser = (req, res, next) => {
     console.log('getAllLikedPostsForOneUser');
     // recherche des enregistrements en BDD post et like pour le user demandé 
@@ -182,7 +204,12 @@ exports.getAllLikedPostsForOneUser = (req, res, next) => {
     }); 
 } 
 
-
+// <-------------------------------- Controller "getAllPosts" ------------------------------->
+/**
+* récupération des informations de l'ensemble des posts (sans pagination)
+*   - si ok : renvoie statut 200 et données
+*   - si ko : renvoie statut 404 ou 500
+*/ 
 exports.getAllPosts = (req, res, next) => {
     console.log('getAllPosts');
     // recherche de l'enregistrement demandé en BDD post  
@@ -203,9 +230,16 @@ exports.getAllPosts = (req, res, next) => {
     }); 
 } 
 
+// <------------------------------ Controller "getAllPostsPaginated" --------------------------->
+/**
+* récupération des informations de l'ensemble des posts (avec pagination)
+*   valeurs par défaut : page = 1, limit (nb par page) = 10
+*   - si ok : renvoie statut 200 et données post (+ données de pagination)
+*   - si ko : renvoie statut 404 ou 500
+*/ 
 exports.getAllPostsPaginated = (req, res, next) => {
     console.log('getAllPostsPaginated');
-    //ICIJCO: ajouter controle sur req.query
+
     const page = Number(req.query.page) || 1 ;
     const limit = Number(req.query.limit) || 10 ;
     const offset = ( (page -1) * limit)  
@@ -244,19 +278,20 @@ exports.getAllPostsPaginated = (req, res, next) => {
                 lastPage : lastPage,
                 totalRows : totalRows,
 
-            })
-                
-                
-        })
-
-
-
-
-        
+            }) 
+        }) 
     }); 
 } 
 
-
+// <-------------------------------- Controller "deleteOnePost" ------------------------------->
+/**
+* suppression d'un post donné.
+*   - seul son propriétaire et l'administrateur sont autorisés à supprimer un post
+*   - la suppression des données associées likes et comments est effectuée en cascade sql, 
+*   - les fichiers images des comments associées sont aussi supprimés
+*   - si ok : renvoie statut 200
+*   - si ko : renvoie statut 403, 404 ou 500
+*/
 exports.deleteOnePost = (req, res, next) => {
     console.log('deleteOnePost');
 

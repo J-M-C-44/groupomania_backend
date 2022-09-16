@@ -22,7 +22,6 @@ passwordSchema
 * vérifie que la donnée password transmise pour l'enregistrement est valide (via password-validator)
 *   - si KO : renvoi statut 400 
 */
-//ICIJCO : voir si tjs ok
 module.exports = (req, res, next) => {
    
     if (!passwordSchema.validate(req.body.password)) {

@@ -16,14 +16,16 @@ const User = require('../models/user')
 const bcrypt = require('bcrypt'); 
 const jwt = require('jsonwebtoken');  
 //const cryptojs = require("crypto-js");
+
 // fonction mutualisée de suppression de fichier
 const removeImageFile = require('../utils/removeFile');
+
+// models
 const Post = require('../models/Post')
 const Comment = require('../models/Comment')
 
 // <-------------------------------- Controller "signup" ------------------------------->
 /**
- * // ICIJCO: revoir commentaires
 * enregistrement d'un nouvel utilisateur à partir de l'email et password fournis
 *   - remarque : contrôle des entrées effectuées au préalable dans le middlewares checkEmail.js et checkPassword.js
 *   - haschage du mot de passe (bcrypt)
@@ -69,18 +71,17 @@ exports.signup = (req, res, next) => {
 
 // <-------------------------------- Controller "login" -------------------------------->
 /**
- *  * // ICIJCO: revoir commentaires
 * connexion d'un utilisateur à partir de l'email et password fournis
 *   - remarque : contrôle des entrées effectuées au préalable dans le middlewares checkEmail.js et checkPassword.js
-*   - recherche de l'enregistrement dans la BDD User en utilisant l'email (préalablement crypté)
+*   - recherche de l'enregistrement dans la BDD users en utilisant l'email 
 *   - verification que le mot de passe et le hash dans BDD User correspondent  
-*   - si ok : renvoie statut 201 avec un token chiffré contenant le userId (jwt)
+*   - si ok : renvoie statut 201 avec un token chiffré contenant le userId et le rôle (jwt) 
 *   - si ko : renvoie statut 400, 401 ou 500
 */
 exports.login = (req, res, next) => {
     console.log('login : ', req.body.email);
 
-    // recherche de l'enregistrement dans la BDD User en utilisant l'email (préalablement crypté)
+    // recherche de l'enregistrement dans la BDD User en utilisant l'email 
     //const cryptedEmail = cryptojs.HmacSHA512(req.body.email, `${process.env.CRYPTOJS_SECRET_KEY}`).toString();
     //User.findByEmail (cryptedEmail , (error, user) => {
     User.findByEmail (req.body.email , (error, user) => {
@@ -107,7 +108,7 @@ exports.login = (req, res, next) => {
                         fonction :  user.fonction,
                         avatarUrl : user.avatarUrl,
                         role :      user.role,
-                        // on crée le token contenant le userId avec jwt
+                        // on crée le token contenant le userId et le rôle avec jwt
                         token: jwt.sign(
                             { userId: user.id, userRole : user.role },
                             process.env.TOKEN_SECRET,
@@ -122,6 +123,12 @@ exports.login = (req, res, next) => {
 
 };
 
+// <-------------------------------- Controller "getOneUser" ------------------------------->
+/**
+* récupération des informations d'un utilisateur à partir son id
+*   - si ok : renvoie statut 200 et données (sans les données sensibles)
+*   - si ko : renvoie statut 404 ou 500
+*/
 exports.getOneUser= (req, res, next) => {
     console.log('getOneUser');
    
@@ -138,13 +145,19 @@ exports.getOneUser= (req, res, next) => {
                     return res.status(500).json({ error });
             }
             // on supprime les données sensibles
-            delete user.email ;
+            //delete user.email ;
             delete user.password; 
             delete user.role ;
             res.status(200).json(user)
         });   
 };
 
+// <-------------------------------- Controller "getAllUsers" ------------------------------->
+/**
+* récupération des informations de l'ensemble des utilisateurs
+*   - si ok : renvoie statut 200 et données (sans les données sensibles)
+*   - si ko : renvoie statut 404 ou 500
+*/
 exports.getAllUsers= (req, res, next) => {
     console.log('getAllUsers');
    
@@ -170,7 +183,14 @@ exports.getAllUsers= (req, res, next) => {
         });   
 };
 
-
+// <-------------------------------- Controller "modifyProfile" ------------------------------->
+/**
+* modifications des informations lastname, firstname, fonction, avatar pour un utilisateur donné.
+*   - remarque : contrôle des entrées efffectué au préalable dans le middleware checkProfileData
+*   - seul son propriétaire et l'administrateur sont autorisés à modifier le user  
+*   - si ok : renvoie statut 200 (et on supprime l'ancien fichier le cas échéant)
+*   - si ko : renvoie statut 403, 404 ou 500 (et on supprime le fichier transmis le cas échéant)
+*/
 exports.modifyProfile= (req, res, next) => {
     console.log('modifyProfile');
    // récupération de l'objet user 
@@ -206,12 +226,6 @@ exports.modifyProfile= (req, res, next) => {
                 } else 
                     return res.status(500).json({ error });
             }
-            
-            // mise à jour de l'enregistrement demandé en BDD user 
-            // sans nouveau fichier image transmis, on conserve l'URL initiale 
-            // if (!req.file) {
-            //     userObject.avatarUrl = user.avatarUrl;
-            // };
 
             // sans nouveau fichier image transmis et sans demande de suppression de l'image, on conserve l'URL initiale 
             let oldAvatarToDelete = false
@@ -225,7 +239,6 @@ exports.modifyProfile= (req, res, next) => {
                     userObject.avatarUrl = user.avatarUrl;
                 }
             }
-
 
             User.updateProfile (userObject , (error, result) => {
         
@@ -250,7 +263,15 @@ exports.modifyProfile= (req, res, next) => {
 };
 
 
-
+// <-------------------------------- Controller "modifyPassword" ------------------------------->
+/**
+* modifications du password pour un utilisateur donné.
+*   - remarque : contrôle des entrées efffectué au préalable dans le middleware checkPassword
+*   - seul son propriétaire est autorisé à modifier le password d'un user
+*   - une vérification de l'ancien password est effectuée  
+*   - si ok : renvoie statut 200
+*   - si ko : renvoie statut 403, 404 ou 500
+*/
 exports.modifyPassword = (req, res, next) => {
     console.log('modifyPassword');
     if (req.params.id != req.auth.userId) {
@@ -274,10 +295,6 @@ exports.modifyPassword = (req, res, next) => {
                     if (!valid) {
                          console.log('user trouvé mais mots de passe différents'); 
                         throw ({ message: 'Not authorized, verify old password' })
-                        //return res.status(403).json({ message: 'Not authorized, verify old password' });
-                        // ICIJCO !- revoir gestion res.status ?
-                        // res.status(403).json({ message: 'Not authorized, verify old password' });
-                        // throw error ;
                     }
                     const rounds = Number(process.env.HASH_NUMBER)
                     return bcrypt.hash(req.body.password, rounds)
@@ -302,7 +319,14 @@ exports.modifyPassword = (req, res, next) => {
     };
 };
 
-
+// <-------------------------------- Controller "modifyEmail" ------------------------------->
+/**
+* modifications de l'Email pour un utilisateur donné.
+*   - remarque : contrôle des entrées efffectué au préalable dans le middleware checkEmail
+*   - seul son propriétaire et l'administrateur sont autorisés à modifier l'email d'un user
+*   - si ok : renvoie statut 200
+*   - si ko : renvoie statut 400, 403, 404 ou 500
+*/
 exports.modifyEmail = (req, res, next) => {
     console.log('modifyEmail');
     if ((req.params.id != req.auth.userId) && !req.auth.roleIsAdmin ) {
@@ -339,7 +363,15 @@ exports.modifyEmail = (req, res, next) => {
 };
 
 
-
+// <-------------------------------- Controller "deleteOneUser" ------------------------------->
+/**
+* suppression d'un utilisateur donné.
+*   - seul son propriétaire et l'administrateur sont autorisés à supprimer un user
+*   - la suppression des données associées posts, likes et comments est effectuée en cascade sql, 
+*   - les fichiers images des posts et comments associées sont aussi supprimés
+*   - si ok : renvoie statut 200
+*   - si ko : renvoie statut 403, 404 ou 500
+*/
 exports.deleteOneUser = (req, res, next) => {
     console.log('deleteOneUser');
     // ICIJCO : mettre contrôle id en middleware ?
@@ -384,6 +416,13 @@ exports.deleteOneUser = (req, res, next) => {
 };
 
 
+/**
+* Pour un user donné, récupère l'ensemble des fichiers des :
+*   - posts créés par ce user  + ceux des commentaires correspondants
+*   - commentaires créés par ce user .
+* @param { String } userId - id du user
+* @return { Array } ImagesFiles - tableau contenant les noms de fichiers (imageUrl) à supprimer (dédoublonnés) 
+*/
 function retrieveImagesFilesPostsAndComments (userId) {
    
      return new Promise((resolve, reject) => {

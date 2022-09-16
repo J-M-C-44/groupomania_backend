@@ -1,7 +1,9 @@
 // dans models
 'use strict';
-
+// <------------------------------------- imports --------------------------------------->
 const sql = require('./db');
+
+// <------------------------ gestion des requtes MySQL / table likes -------------------->
 
 // constructeur
 const Like = function(like) {
@@ -9,6 +11,12 @@ const Like = function(like) {
       this.postId   = like.postId;
   };
 
+
+/**
+* insert un nouvel enregistrement like dans la table likes 
+* @param { Object } newlike - nouvel enregistement like
+* @return { Object } result - enregistrement like créé avec id correspondant  // ou erreur
+*/
 Like.create = (newlike, result) => {
   sql.query(
       'INSERT INTO likes SET ?',
@@ -26,6 +34,11 @@ Like.create = (newlike, result) => {
   );
 };
 
+/** 
+* recherche des enregistrements de la table like pour un id donné
+* @param { String } id- id à rechercher
+* @return { Array } result - 1er résultat de la requete    // ou erreur
+*/
 Like.findById = (id, result) => {
   console.log("id: ", id);
   sql.query(
@@ -50,7 +63,12 @@ Like.findById = (id, result) => {
 
 };
 
-
+/** 
+* recherche des enregistrements de la table like pour un post donné et un user donné
+* @param { String } postId- id du post recherché
+* @param { String } userId- id du user recherché
+* @return { Array } result - résultat de la requete    // ou erreur
+*/
 Like.findByPostIdAndUserId = (postId, userId, result) => {
   console.log("postId : ",postId  , 'userId : ', userId)
   sql.query(
@@ -73,6 +91,11 @@ Like.findByPostIdAndUserId = (postId, userId, result) => {
   );
 }
 
+/** 
+* recherche des enregistrements de la table like pour un post donné
+* @param { String } postId- id du post recherché
+* @return { Array } result - résultat de la requete    // ou erreur
+*/
 Like.findAllByPost = (postId, result) => {
 
   sql.query(
@@ -96,6 +119,11 @@ Like.findAllByPost = (postId, result) => {
 
 };
 
+/** 
+* recherche des enregistrements de la table like pour un user donné
+* @param { String } userId- id du user recherché
+* @return { Array } result - résultat de la requete    // ou erreur
+*/
 Like.findAllByUser = (userId, result) => {
 
   sql.query(
@@ -119,6 +147,11 @@ Like.findAllByUser = (userId, result) => {
 
 };
 
+/** 
+* recherche du total des enregistrements de la table like pour un post donné
+* @param { String } postId- id du post pour lequel on veut le total
+* @return { Array } result - résultat de la requete    // ou erreur
+*/
 Like.countByPost = (postId, result) => {
 
   sql.query(
@@ -137,6 +170,10 @@ Like.countByPost = (postId, result) => {
 
 };
 
+/** 
+* recherche de tous les enregistrements dans la table likes
+* @return { Array } result - résultat de la requete    // ou erreur
+*/
 Like.findAll = (result) => {
   sql.query(
       'SELECT * FROM likes',
@@ -158,7 +195,11 @@ Like.findAll = (result) => {
 
 };
 
- 
+/**
+* suppression d'un enregistrement dans la table likes pour un like donné 
+* @param { String } like.id - id du like à supprimer
+* @return { Array } result - résultat de la requete     // ou erreur
+*/ 
 Like.delete = (like, result) => {
   sql.query(
       'DELETE FROM likes WHERE ID = ?',

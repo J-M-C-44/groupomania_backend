@@ -4,9 +4,11 @@
 // express et création router
 const express = require('express');
 const router = express.Router();
+
 // middleware :
 //  - authorize : pour vérifier l'authentification (via token jwt)
-//  - multer: pour gérer les fichiers entrants 
+//  - multer: pour gérer les fichiers entrants
+//  - checkText, checkReqParamsId, checkReqQuery: contrôles d'entrées 
 const authorize = require("../middleware/authorize")
 const multer = require('../middleware/multer-config');
 const checkText = require('../middleware/checkText');
@@ -18,6 +20,7 @@ const postCtrl = require('../controllers/post');
 const likeCtrl = require('../controllers/like');
 const commentCtrl = require('../controllers/comment');
 
+//routes 
 // création d'un post
 router.post('/',                authorize,                   multer, checkText, postCtrl.createPost);
 // modification d'un post

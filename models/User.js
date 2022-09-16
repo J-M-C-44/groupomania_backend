@@ -1,8 +1,10 @@
 // dans models
 'use strict';
 
+// <------------------------------------- imports --------------------------------------->
 const sql = require('./db');
 
+// <------------------------- gestion des requtes MySQL / table users ------------------->
 
 // constructeur
 const User = function(user) {
@@ -15,6 +17,11 @@ const User = function(user) {
       this.role       = user.role
   };
 
+/**
+* insert un nouvel enregistrement user dans la table users 
+* @param { Object } newUser - nouvel enregistement user
+* @return { Object } result - enregistrement user créé avec id correspondant  // ou erreur
+*/
 User.create = (newUser, result) => {
   sql.query(
       'INSERT INTO users SET ?',
@@ -31,7 +38,11 @@ User.create = (newUser, result) => {
       }
   );
 };
-
+/**
+* recherche en table users pour un email donné 
+* @param { String } email - email à recherché
+* @return { Array } result - 1er enregistrement trouvé ou "not_found"    // ou erreur
+*/
 User.findByEmail = (email, result) => {
   console.log("email: ", email);
   sql.query(
@@ -49,12 +60,16 @@ User.findByEmail = (email, result) => {
               result({ kind: "not_found" }, null);
               return;
           } 
-          // console.log("user trouvé: ", res[0]);
           result(null, res[0]);
       }
   );
 };
 
+/**
+* recherche en table users pour un id donné 
+* @param { String } id - id à recherché
+* @return { Array } result - 1er enregistrement trouvé ou "not_found"    // ou erreur
+*/
 User.findById = (id, result) => {
   console.log("id: ", id);
   sql.query(
@@ -72,7 +87,6 @@ User.findById = (id, result) => {
               result({ kind: "not_found" }, null);
               return;
           }
-          console.log("users trouvés: ", res)
           console.log("user trouvé: ", res[0]);
           result(null, res[0]);
     }
@@ -80,7 +94,10 @@ User.findById = (id, result) => {
 
 };
 
-
+/**
+* recherche de tous les enregistrements en table users 
+* @return { Array } result - tableau des enregistrements trouvés ou "not_found"    // ou erreur
+*/
 User.findAll = (result) => {
 
   sql.query(
@@ -104,8 +121,17 @@ User.findAll = (result) => {
 
 };
 
+/**
+* modification de donnés dans la table users pour un user donné 
+* @param { String } user.lastname - nouveau nom
+* @param { String } user.firstname - nouveau prénom
+* @param { String } user.fonction - nouvelle fonction
+* @param { String } user.avatarUrl - nouvel Url de l'avatar
+* @param { String } user.id - id du user à modifier
+* @return { Array } result - tableau des enregistrements trouvés ou "not_found"    // ou erreur
+*/
 User.updateProfile = (user, result) => {
-  //console.log('icijco - entrée updateProfile, données : ', user.lastname, user.firstname, user.fonction, user.avatarUrl, user.id);
+
   sql.query(
       'UPDATE users SET LASTNAME = ?, FIRSTNAME = ?, FONCTION = ? , AVATARURL = ? WHERE ID = ?',
       [user.lastname, user.firstname, user.fonction, user.avatarUrl, user.id],
@@ -122,6 +148,13 @@ User.updateProfile = (user, result) => {
   );
 
 };
+
+/**
+* modification du password dans la table users pour un user donné 
+* @param { String } user.password - nouveau password
+* @param { String } user.id - id du user à modifier
+* @return { Array } result - résultat de la requete    // ou erreur
+*/
 User.updatePassword = (user, result) => {
   sql.query(
       'UPDATE users SET PASSWORD = ? WHERE ID = ?',
@@ -139,6 +172,12 @@ User.updatePassword = (user, result) => {
   );
 };
 
+/**
+* modificationde l'email dans la table users pour un user donné 
+* @param { String } user.email - nouvel email
+* @param { String } user.id - id du user à modifier
+* @return { Array } result - résultat de la requete    // ou erreur
+*/
 User.updateEmail = (user, result) => {
   sql.query(
       'UPDATE users SET  EMAIL = ? WHERE ID = ?',
@@ -156,7 +195,11 @@ User.updateEmail = (user, result) => {
   );
 };
 
- 
+/**
+* suprresion d'un enregistrement dans la table users pour un user donné 
+* @param { String } user.id - id du user à supprimé
+* @return { Array } result - résultat de la requete    // ou erreur
+*/
 User.delete = (user, result) => {
   sql.query(
       'DELETE FROM users WHERE ID = ?',
