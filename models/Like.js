@@ -122,7 +122,7 @@ Like.findAllByUser = (userId, result) => {
 Like.countByPost = (postId, result) => {
 
   sql.query(
-      'SELECT COUNT(*) FROM likes WHERE postId = ?',
+      'SELECT COUNT(*) AS total FROM likes WHERE postId = ?',
       [postId],
       function (err, res) {
           if (err) {
@@ -131,9 +131,7 @@ Like.countByPost = (postId, result) => {
               return;
           }
 
-          console.log("nb likes trouvés: ", res[0]['COUNT(*)']);
-          console.log("res.length ", res.length);
-          result(null, res[0]['COUNT(*)']);
+          result(null, res[0].total);
     }
   );
 

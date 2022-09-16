@@ -190,10 +190,7 @@ exports.getAllPosts = (req, res, next) => {
 
         if (error) {
             console.log(' pb post.findAll; erreur : ', error);
-            // si pb, on fait retour arrière sur l'éventuel fichier transmis
-            if (req.file) { 
-                removeImageFile(req.file.filename);
-            }
+            
             if (error.kind == 'not_found') { 
                 console.log('post non trouvé'); 
                 return res.status(404).json({ message: 'post not found'});
@@ -203,6 +200,59 @@ exports.getAllPosts = (req, res, next) => {
         }
 
         res.status(200).json(posts)
+    }); 
+} 
+
+exports.getAllPostsPaginated = (req, res, next) => {
+    console.log('getAllPostsPaginated');
+    //ICIJCO: ajouter controle sur req.query
+    const page = Number(req.query.page) || 1 ;
+    const limit = Number(req.query.limit) || 10 ;
+    const offset = ( (page -1) * limit)  
+    // recherche de l'enregistrement demandé en BDD post  
+    Post.findAllPaginated(limit, offset, (error, posts) => {
+
+        if (error) {
+            console.log(' pb post.findAllPaginated; erreur : ', error);
+            // si pb, on fait retour arrière sur l'éventuel fichier transmis
+            
+            if (error.kind == 'not_found') { 
+                console.log('post non trouvé'); 
+                return res.status(404).json({ message: 'post not found'});
+
+            } else 
+                return res.status(500).json({ error });
+        }
+
+        Post.count ((error, countPosts) => {
+            if (error) {
+                console.log(' pb Post.count (getAllPostsPaginated); erreur : ', error);
+                return res.status(500).json({ error });
+            }
+
+            const currentPage = page;
+            const totalPages = Math.ceil(countPosts / limit);
+            const firstPage = (currentPage == 1) ? true: false;
+            const lastPage = (currentPage == totalPages) ? true: false;
+            const totalRows = countPosts;
+            
+            res.status(200).json({
+                posts,
+                currentPage : currentPage,
+                totalPages: totalPages,
+                firstPage : firstPage,
+                lastPage : lastPage,
+                totalRows : totalRows,
+
+            })
+                
+                
+        })
+
+
+
+
+        
     }); 
 } 
 

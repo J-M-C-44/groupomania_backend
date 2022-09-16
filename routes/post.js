@@ -11,6 +11,7 @@ const authorize = require("../middleware/authorize")
 const multer = require('../middleware/multer-config');
 const checkText = require('../middleware/checkText');
 const checkReqParamsId = require('../middleware/checkReqParamsId');
+const checkReqQuery= require('../middleware/checkReqQuery');
 
 // controllers
 const postCtrl = require('../controllers/post');
@@ -24,7 +25,7 @@ router.put('/:id',              authorize, checkReqParamsId, multer, checkText, 
 // récupération du détail d'un post
 router.get('/:id',              authorize, checkReqParamsId,                    postCtrl.getOnePost);
 // récupération de tous les posts
-router.get('/',                 authorize,                                      postCtrl.getAllPosts);
+router.get('/',                 authorize, checkReqQuery,                       postCtrl.getAllPostsPaginated);
 // supression d'un post
 router.delete('/:id',           authorize, checkReqParamsId,                    postCtrl.deleteOnePost);
 // ajout d'un like

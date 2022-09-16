@@ -122,6 +122,30 @@ Post.findAll = (result) => {
 
 };
 
+Post.findAllPaginated = (limit, offset, result) => {
+
+    sql.query(
+        'SELECT * FROM posts  ORDER BY modifiedTime DESC LIMIT ? OFFSET ?',
+        [limit, offset] ,
+
+        function (err, res) {
+            if (err) {
+                console.log("error: ", err);
+                result(err, null);
+                return;
+            }
+            if (!res.length) {
+                // posts non trouvés
+                result({ kind: "not_found" }, null);
+                return;
+            }
+            console.log("posts trouvés: ", res);
+            result(null, res);
+      }
+    );
+  
+  };
+
 
 Post.findAllImagesByUserId = (userId, result) => {
     sql.query(
@@ -141,6 +165,23 @@ Post.findAllImagesByUserId = (userId, result) => {
     );
   
 }
+
+Post.count = (result) => {
+
+    sql.query(
+        'SELECT COUNT(*) as total FROM posts ',
+
+        function (err, res) {
+            if (err) {
+                console.log("error: ", err);
+                result(err, null);
+                return;
+            }
+            result(null, res[0].total);
+      }
+    );
+  
+  };
 
 Post.update = (post, result) => {
   sql.query(

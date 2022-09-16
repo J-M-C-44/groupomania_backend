@@ -1,16 +1,11 @@
 'use strict';
-// <------------------------------------- imports --------------------------------------->
-// fonction mutualisée de suppression de fichier
-const removeImageFile = require('../utils/removeFile');
-
 
 const DigitTypeRegexp = new RegExp('^[1-9][0-9]{0,29}$'); 
 
-// <---------------------------- Middleware "checkProfile Data" --------------------------->
+// <---------------------------- Middleware "checkReq.paramsId" --------------------------->
 /**
-* vérifie les données transmises pour la création et la modification de profil user :
-    - lastname, firstname, fonction
-*   - si KO : suppression du fichier éventuellement transmis et renvoi statut 400 
+* vérifie les données transmises dans req.params.id :
+*   - si KO : renvoie statut 400 
 */
 module.exports = (req, res, next) => {
     
