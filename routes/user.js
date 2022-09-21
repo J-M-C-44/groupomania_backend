@@ -43,8 +43,6 @@ router.get('/:id',              authorize,                    checkReqParamsId, 
 router.get('/',                 authorize,                                                                          userCtrl.getAllUsers);
 // récupération des posts pour un user
 router.get('/:id/posts/',       authorize,                    checkReqParamsId,                                     postCtrl.getAllPostsForOneUser);
-// récupération des commentaires "liké" pour un user
-router.get('/:id/posts/liked/', authorize,                    checkReqParamsId,                                     postCtrl.getAllLikedPostsForOneUser);
 // récupération des commentaires pour un user
 router.get('/:id/comments/',    authorize,                    checkReqParamsId,                                     commentCtrl.getAllCommentsForOneUser);
 // récupération des likes pour un user

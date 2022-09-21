@@ -1,0 +1,1441 @@
+openapi: 3.0.1
+info:
+  title: swagger groupomania
+  description: groupomania company's social network. 
+  version: '1'
+servers:
+  - url: http://localhost:3000
+tags:
+  - name: user
+    description: Everything about users
+  - name: post
+    description: Everything about post
+  - name: comment
+    description: Everything about comments
+  - name: like
+    description: Everything about like
+    
+paths:
+  /api/v1/auth/signup:
+    post:
+      tags:
+       - user
+      description: registering a new user
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  example: test123gmail.com
+                password:
+                  type: string
+                  example: pwD12345!
+              required:
+                - email
+                - password
+      responses:
+        '201':
+          description: new user correctly registered
+          content:
+            application/json; charset=utf-8:
+              schema:
+                type: object
+                properties:
+                    message:
+                        type: string
+                        example: user created
+                    id:
+                      type: integer
+                      example: 8
+        '400':
+          description: invalid request - signup aborted
+          content:
+            application/json; charset=utf-8:
+              schema:
+                type: object
+                properties:
+                    message:
+                        type: string
+                        example: signup aborted, invalid email
+        '500':
+          description: internal error - signup aborted
+          
+  /api/v1/auth/login:
+    post:
+      tags:
+       - user
+      description: log in user account
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  example : test123@gmail.com
+                password:
+                  type: string
+                  example: pwD12345!
+              required:
+                - email
+                - password
+      responses:
+        '200':
+          description: user correctly logged in
+          content:
+            application/json; charset=utf-8:
+              schema:
+                type: object
+                properties:
+                    id:
+                      type: integer
+                      example: 8
+                    lastname:
+                      type: string
+                      example: Covert
+                    firstname:
+                      type: string
+                      example: Harry
+                    fonction:
+                      type: string
+                      example: null
+                    avatarUrl:
+                      type: string
+                      example: null
+                    role:
+                      type: integer
+                      example: 0
+                    token:
+                      type: string
+                      example : eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjQsInVzZXJSb2xlIjowLCJpYXQiOjE2NjM2ODIwNDYsImV4cCI6MTY2Mzc2ODQ0Nn0.AP4lqofp1Ya5U7cA_GilMFJtgsvXllbZgs1vR88Niuk
+        '401':
+          description: Incorrect username/password pair - login aborted
+        '500':
+          description: internal error - login aborted
+          
+  /api/v1/users/{id}:
+    get:
+      tags:
+       - user
+      description: find user by his id
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          description: ID of user to return
+          required: true
+          schema:
+            type: integer
+            example : 8
+      responses:
+        '200':
+          description: user information retrieved
+          content:
+            application/json; charset=utf-8:
+              schema:
+                type: object
+                properties:
+                    id:
+                      type: integer
+                      example: 8
+                    email:
+                      type: string
+                      example : test123@gmail.com
+                    lastname:
+                      type: string
+                      example: Covert
+                    firstname:
+                      type: string
+                      example: Harry
+                    fonction:
+                      type: string
+                      example: developpeur web en herbe
+                    avatarUrl:
+                      type: string
+                      example: http://localhost:3000/images/user/1663748825875-a19bed2d655f41e993243532d40181e5.png
+                    createdTime:
+                      type: string
+                      example: 2022-09-15T17:28:49.000Z
+                    modifiedTime:
+                      type: string
+                      example: 2022-09-16T14:46:55.000Z
+        '401':
+          description: Invalid authentification 
+        '404':
+          description: user not found 
+        '500':
+          description: internal error
+          
+    delete:
+      tags:
+       - user
+      description: delete a user by his id
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          description: ID of user to delete
+          required: true
+          schema:
+            type: integer
+            example: 8
+      responses:
+        '200':
+          description: user deleted
+          content:
+            application/json; charset=utf-8:
+              schema:
+                type: object
+                properties:
+                    message:
+                      type: string
+                      example : user deleted
+        '401':
+          description: Invalid authentification 
+        '403':
+          description: action not autorized 
+        '404':
+          description: user not found 
+        '500':
+          description: internal error
+          
+  /api/v1/users/:
+    get:
+      tags:
+         - user
+      description: find alls users
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: users information retrieved
+          content:
+            application/json; charset=utf-8:
+              schema:
+                type : array
+                items:
+                  type: object
+                  properties:
+                      id:
+                        type: integer
+                        example: 8
+                      lastname:
+                        type: string
+                        example: Covert
+                      firstname:
+                        type: string
+                        example: Harry
+                      fonction:
+                        type: string
+                        example: developpeur web en herbe
+                      avatarUrl:
+                        type: string
+                        example: http://localhost:3000/images/user/1663748825875-a19bed2d655f41e993243532d40181e5.png
+                      createdTime:
+                        type: string
+                        example: 2022-09-15T17:28:49.000Z
+                      modifiedTime:
+                        type: string
+                        example: 2022-09-16T14:46:55.000Z
+        '401':
+          description: Invalid authentification 
+        '404':
+          description: users not found 
+        '500':
+          description: internal error
+          
+  /api/v1/users/{id}/profile:
+    put:
+      tags:
+       - user
+      description: update profile's informations for user by his id 
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          description: ID of user to update
+          required: true
+          schema:
+            type: integer
+            example : 8
+        - name: image
+          in: query
+          description: optional image file (user's avatar) to upload (jpg/jpeg/png/gif/webp)
+          required: false
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id:
+                  type: integer
+                  example: 8
+                lastname:
+                  type: string
+                  example: Covert
+                firstname:
+                  type: string
+                  example: Harry
+                fonction:
+                  type: string
+                  example: developpeur web en herbe  
+                avatarUrl:
+                  description: only to use if you want to delete image
+                  type: string
+                  example: toDelete (/!\ only to use if you want to delete actual image /!\)
+              required:
+                - id
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                user:
+                  type: object
+                  properties:
+                    id:
+                      type: integer
+                      example: 8
+                    lastname:
+                      type: string
+                      example: Covert
+                    firstname:
+                      type: string
+                      example: Harry
+                    fonction:
+                      type: string
+                      example: developpeur web en herbe
+                  required:
+                    - id
+                fileName:
+                  type: string
+                  format: binary
+                  example : monAvatar.png
+      responses:
+        '200':
+          description: user modified
+          content:
+            application/json; charset=utf-8:
+              schema:
+                type: object
+                properties:
+                    message:
+                      type: string
+                      example: user modified
+        '401':
+          description: Invalid authentification 
+        '403':
+          description: action not autorized 
+        '404':
+          description: user not found 
+        '500':
+          description: internal error
+          
+  /api/v1/users/{id}/email:
+    patch:
+      tags:
+       - user
+      description: update user's email by his id
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          description: ID of user to update
+          required: true
+          schema:
+            type: integer
+            example : 8
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  example: test1234@gmail.com
+              required:
+                - email
+      responses:
+        '200':
+          description: email modified
+          content:
+            application/json; charset=utf-8:
+              schema:
+                type: object
+                properties:
+                    message:
+                      type: string
+                      example: Email modified
+        '401':
+          description: Invalid authentification 
+        '403':
+          description: action not autorized 
+        '404':
+          description: user not found 
+        '500':
+          description: internal error
+          
+  /api/v1/users/{id}/password:
+    patch:
+      tags:
+       - user
+      description: update user's password by his id
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          description: ID of user to update
+          required: true
+          schema:
+            type: integer
+            example : 8
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                password:
+                  type: string
+                  example: newPassword1234!
+                oldpassword:
+                  type: string
+                  example: oldPassword123!
+              required:
+                - password
+                - oldpassword
+      responses:
+        '200':
+          description: password modified
+          content:
+            application/json; charset=utf-8:
+              schema:
+                type: object
+                properties:
+                    message:
+                      type: string
+                      example: Email modified
+        '401':
+          description: Invalid authentification 
+        '403':
+          description: action not autorized 
+        '404':
+          description: user not found 
+        '500':
+          description: internal error
+          
+  /api/v1/users/{id}/posts:
+    get:
+      tags:
+       - user
+       - post
+      description: find all posts posted by a user (using his id)
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          description: ID of user
+          required: true
+          schema:
+            type: integer
+            example : 8
+      responses:
+        '200':
+          description: alls user's posts retrieved
+          content:
+            application/json; charset=utf-8:
+              schema:
+                type : array
+                items:
+                  type: object
+                  properties:
+                      id:
+                        description: post's id
+                        type: integer
+                        example: 301
+                      userId:
+                        type: integer
+                        example : 8
+                      text:
+                        type: string
+                        example: My first post on groupomania 
+                      imageUrl:
+                        type: string
+                        example: http://localhost:3000/images/post/1663339744306-14e49819538a4ffda8bb9e5fd7a09c19.gif
+                      createdTime:
+                        type: string
+                        example: 2022-09-19T17:28:49.000Z
+                      modifiedTime:
+                        type: string
+                        example: 2022-09-19T17:28:49.000Z
+        '401':
+          description: Invalid authentification 
+        '404':
+          description: user or post not found 
+        '500':
+          description: internal error
+          
+  /api/v1/users/{id}/comments:
+    get:
+      tags:
+       - user
+       - comment
+      description: find all comments posted by a user (using his id)
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          description: ID of user
+          required: true
+          schema:
+            type: integer
+            example : 8
+      responses:
+        '200':
+          description: alls comments retrieved
+          content:
+            application/json; charset=utf-8:
+              schema:
+                type : array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      description: comment's id
+                      type: integer
+                      example: 509
+                    userId:
+                      type: integer
+                      example : 8
+                    postId:
+                      type: integer
+                      example : 301
+                    text:
+                      type: string
+                      example: My comment on a post on groupomania 
+                    imageUrl:
+                      type: string
+                      example: null
+                    createdTime:
+                      type: string
+                      example: 2022-09-20T18:28:49.000Z
+                    modifiedTime:
+                      type: string
+                      example: 2022-09-20T18:28:49.000Z
+        '401':
+          description: Invalid authentification 
+        '404':
+          description: user or comment not found 
+        '500':
+          description: internal error
+          
+  /api/v1/users/{id}/likes:
+    get:
+      tags:
+       - user
+       - like
+      description: find all likes given by a user (using his userId)
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          description: ID of user
+          required: true
+          schema:
+            type: integer
+            example : 8
+      responses:
+        '200':
+          description: alls likes retrieved
+          content:
+            application/json; charset=utf-8:
+              schema:
+                type : array
+                items:
+                  type: object
+                  properties:
+                      id:
+                        description: like's id
+                        type: integer
+                        example: 703
+                      userId:
+                        type: integer
+                        example : 23
+                      postId:
+                        type: integer
+                        example : 509
+                      createdTime:
+                        type: string
+                        example: 2022-09-20T19:28:49.000Z
+                      modifiedTime:
+                        type: string
+                        example: 2022-09-20T19:28:49.000Z
+        '401':
+          description: Invalid authentification 
+        '404':
+          description: user or like not found 
+        '500':
+          description: internal error
+          
+  /api/v1/posts/:
+    post:
+      tags:
+       - post
+      description: post a new message (= a new post)
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: image
+          in: query
+          description: optionnal image file to upload (jpg/jpeg/png/gif/webp)
+          required: false
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              description : without image uploaded, only text
+              type: object
+              properties:
+                text:
+                  type: string
+                  example: my first post without image on groupomania !
+              required:
+                - text
+          multipart/form-data:
+            schema:
+              description : with image uploaded
+              type: object
+              properties:
+                post:
+                  type: object
+                  properties:
+                    text:
+                      type: string
+                      example: my first post with image on groupomania !
+                  required:
+                    - texte
+                fileName:
+                  type: string
+                  format: binary
+                  example : monImage.png            
+      responses:
+        '201':
+          description: new post created
+          content:
+            application/json; charset=utf-8:
+              schema:
+                type: object
+                properties:
+                    id:
+                      type: integer
+                      example: 103
+                    userid:
+                      type: integer
+                      example: 8
+                    text:
+                      type: string
+                      example: my first post with image on groupomania !
+                    imageUrl:
+                      type: string
+                      example: http://localhost:3000/images/post/1663753963219-de283a8b52244876a99d59d953114977.gif
+        '400':
+          description: invalid request - adding post aborted
+          content:
+            application/json; charset=utf-8:
+              schema:
+                type: object
+                properties:
+                    message:
+                        type: string
+                        example: Text invalid
+        '500':
+          description: internal error - adding post aborted
+          
+    get:
+      tags:
+       - post
+      description: find all posts (with pagination)
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: page
+          in: query
+          description: number of page wanted (optionnal)
+          required: false
+          schema:
+            type: integer
+        - name: limit
+          in: query
+          description: number of posts by page (optionnal)
+          required: false
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: posts found, informations retrieved
+          content:
+            application/json; charset=utf-8:
+              schema:
+                type: object
+                properties:
+                    posts :
+                      type : array
+                      items: 
+                        type: object
+                        properties: 
+                          id:
+                            type: integer
+                            example: 103
+                          userid:
+                            type: integer
+                            example: 8
+                          text:
+                            type: string
+                            example: my first post with image on groupomania !
+                          imageUrl:
+                            type: string
+                            example: http://localhost:3000/images/post/1663753963219-de283a8b52244876a99d59d953114977.gif
+                    currentPage :
+                      type: integer
+                      example : 1
+                    totalPages :
+                      type: integer
+                      example : 40
+                    firstPage:
+                      type : boolean
+                      example: true
+                    lastPage:
+                      type : boolean
+                      example: false
+                    totalRows:
+                      type: integer
+                      example : 621
+        '400':
+          description: invalid request - getting posts aborted
+          content:
+            application/json; charset=utf-8:
+              schema:
+                type: object
+                properties:
+                    message:
+                        type: string
+        '404':
+          description: posts not found
+          content:
+            application/json; charset=utf-8:
+              schema:
+                type: object
+                properties:
+                    message:
+                        type: string
+        '500':
+          description: internal error - getting posts aborted
+          
+  /api/v1/posts/{id}:
+    put:
+      tags:
+       - post
+      description: modify a post
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          description: id of post to update
+          required: true
+          schema:
+            type: integer
+            example : 103
+        - name: image
+          in: query
+          description: optionnal image file to upload (jpg/jpeg/png/gif/webp)
+          required: false
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              description : without image uploaded, only text
+              type: object
+              properties:
+                text:
+                  type: string
+                  example: my updated post without image on groupomania !
+                imageUrl:
+                  description: only to use if you want to delete image
+                  type: string
+                  example: toDelete (/!\ only to use if you want to delete actual image /!\)
+              required:
+                - text
+          multipart/form-data:
+            schema:
+              description : with image uploaded
+              type: object
+              properties:
+                post:
+                  type: object
+                  properties:
+                    text:
+                      type: string
+                      example: my updated post with image on groupomania !
+                  required:
+                    - texte
+                fileName:
+                  type: string
+                  format: binary
+                  example : monImage.png            
+      responses:
+        '200':
+          description: post updated
+          content:
+            application/json; charset=utf-8:
+              schema:
+                type: object
+                properties:
+                  message:
+                      type: string
+                      example: post modified
+        '401':
+          description: Invalid authentification 
+        '403':
+          description: action not autorized 
+        '404':
+          description: post not found - updating post aborted
+          content:
+            application/json; charset=utf-8:
+              schema:
+                type: object
+                properties:
+                    message:
+                        type: string
+                        example: post not found
+        '500':
+          description: internal error - updating post aborted
+          
+    get:
+      tags:
+       - post
+      description: find a post by postId
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          description: ID of post
+          required: true
+          schema:
+            type: integer
+            example : 8
+      responses:
+        '200':
+          description: post retrieved
+          content:
+            application/json; charset=utf-8:
+              schema:
+                type: object
+                properties:
+                    id:
+                      description: post's id
+                      type: integer
+                      example: 301
+                    userId:
+                      type: integer
+                      example : 8
+                    text:
+                      type: string
+                      example: My first post on groupomania 
+                    imageUrl:
+                      type: string
+                      example: http://localhost:3000/images/post/1663339744306-14e49819538a4ffda8bb9e5fd7a09c19.gif
+                    createdTime:
+                      type: string
+                      example: 2022-09-19T17:28:49.000Z
+                    modifiedTime:
+                      type: string
+                      example: 2022-09-19T17:28:49.000Z
+        '401':
+          description: Invalid authentification 
+        '404':
+          description: post not found 
+        '500':
+          description: internal error
+          
+    delete:
+      tags:
+       - post
+      description: delete a post by his id
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          description: ID of post to delete
+          required: true
+          schema:
+            type: integer
+            example: 8
+      responses:
+        '200':
+          description: post deleted
+          content:
+            application/json; charset=utf-8:
+              schema:
+                type: object
+                properties:
+                    message:
+                      type: string
+                      example : post deleted
+        '401':
+          description: Invalid authentification 
+        '403':
+          description: action not autorized 
+        '404':
+          description: post not found 
+        '500':
+          description: internal error
+          
+  /api/v1/posts/{id}/comments:
+    post:
+      tags:
+       - post
+       - comment
+      description: add a new comment on a post
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          description: ID of post
+          required: true
+          schema:
+            type: integer
+            example : 103
+        - name: image
+          in: query
+          description: optionnal image file to upload (jpg/jpeg/png/gif/webp)
+          required: false
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              description : without image uploaded, only text
+              type: object
+              properties:
+                text:
+                  type: string
+                  example: my first comment without image on groupomania !
+              required:
+                - text
+          multipart/form-data:
+            schema:
+              description : with image uploaded
+              type: object
+              properties:
+                post:
+                  type: object
+                  properties:
+                    text:
+                      type: string
+                      example: my first comment with image on groupomania !
+                  required:
+                    - texte
+                fileName:
+                  type: string
+                  format: binary
+                  example : monImage.png            
+      responses:
+        '201':
+          description: new comment added
+          content:
+            application/json; charset=utf-8:
+              schema:
+                type: object
+                properties:
+                    id:
+                      type: integer
+                      example: 103
+                    userId:
+                      type: integer
+                      example: 8
+                    postId:
+                      type: integer
+                      example: 8
+                    text:
+                      type: string
+                      example: my first comment with image on groupomania !
+                    imageUrl:
+                      type: string
+                      example: http://localhost:3000/images/post/1663753963219-de283a8b52244876a99d59d953114977.gif
+        '400':
+          description: invalid request - adding comment aborted
+          content:
+            application/json; charset=utf-8:
+              schema:
+                type: object
+                properties:
+                    message:
+                        type: string
+                        example: Text invalid
+        '401':
+          description: Invalid authentification - adding comment aborted
+        '404':
+          description: post not found - adding comment aborted
+        '500':
+          description: internal error - adding comment aborted
+          
+    get:
+      tags:
+       - post
+       - comment
+      description: find all comments on a post (using post id)
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          description: ID of post
+          required: true
+          schema:
+            type: integer
+            example : 103
+      responses:
+        '200':
+          description: alls comments retrieved
+          content:
+            application/json; charset=utf-8:
+              schema:
+                type : array
+                items:
+                  type: object
+                  properties:
+                      id:
+                        description: comment's id
+                        type: integer
+                        example: 509
+                      userId:
+                        type: integer
+                        example : 8
+                      postId:
+                        type: integer
+                        example : 301
+                      text:
+                        type: string
+                        example: My comment on a post on groupomania 
+                      imageUrl:
+                        type: string
+                        example: null
+                      createdTime:
+                        type: string
+                        example: 2022-09-20T18:28:49.000Z
+                      modifiedTime:
+                        type: string
+                        example: 2022-09-20T18:28:49.000Z
+        '401':
+          description: Invalid authentification 
+        '404':
+          description: post or comment not found 
+        '500':
+          description: internal error
+          
+  /api/v1/posts/{id}/likes:
+    post:
+      tags:
+       - post
+       - like
+      description: add a new like on a post 
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          description: ID of post
+          required: true
+          schema:
+            type: integer
+            example : 103
+      responses:
+        '201':
+          description: new like added
+          content:
+            application/json; charset=utf-8:
+              schema:
+                type: object
+                properties:
+                    id:
+                      type: integer
+                      example: 23
+                    userId:
+                      type: integer
+                      example: 8
+                    postId:
+                      type: integer
+                      example: 8
+        '401':
+          description: Invalid authentification - adding like aborted
+        '403':
+          description: not authorized - adding like aborted
+        '404':
+          description: post not found - adding like aborted
+        '500':
+          description: internal error - adding like aborted
+          
+    get:
+      tags:
+       - post
+       - like
+      description: find all likes on a post (using post id)
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          description: ID of post
+          required: true
+          schema:
+            type: integer
+            example : 103
+      responses:
+        '200':
+          description: alls likes retrieved
+          content:
+            application/json; charset=utf-8:
+              schema:
+                type : array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      description: like's id
+                      type: integer
+                      example: 23
+                    userId:
+                      type: integer
+                      example : 8
+                    postId:
+                      type: integer
+                      example : 301
+                    createdTime:
+                      type: string
+                      example: 2022-09-20T18:28:49.000Z
+                    modifiedTime:
+                      type: string
+                      example: 2022-09-20T18:28:49.000Z
+        '401':
+          description: Invalid authentification 
+        '404':
+          description: post or like not found 
+        '500':
+          description: internal error
+          
+  /api/v1/posts/{id}/likes/count:
+    get:
+      tags:
+       - post
+       - like
+      description: find total (count) of likes on a post (using post id)
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          description: ID of post
+          required: true
+          schema:
+            type: integer
+            example : 103
+      responses:
+        '200':
+          description: total count of likes on the postretrieved
+          content:
+            application/json; charset=utf-8:
+              schema:
+                  type: object
+                  properties:
+                      countLikes:
+                        type: integer
+                        example: 1
+        '401':
+          description: Invalid authentification 
+        '404':
+          description: post not found 
+        '500':
+          description: internal error
+          
+  /api/v1/posts/likes/:
+    get:
+      tags:
+       - post
+       - like
+       - user
+      description: find all posts liked by a user  (using user id)
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: userId
+          in: query
+          description: ID of user or me if actual user searched
+          required: true
+          schema:
+              oneOf:
+              - type: integer
+                example : 8
+              - type: string
+                enum : [me]
+                example: me
+      responses:
+        '200':
+          description: posts liked by user retrieved
+          content:
+            application/json; charset=utf-8:
+              schema:
+                type : array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      description: post's id
+                      type: integer
+                      example: 103
+                    userId:
+                      type: integer
+                      example : 8
+                    text:
+                      type: string
+                      example: a post with image on groupomania !
+                    imageUrl:
+                      type: string
+                      example: http://localhost:3000/images/post/1663753963219-de283a8b52244876a99d59d953114977.gif
+                    createdTime:
+                      type: string
+                      example: 2022-09-20T18:28:49.000Z
+                    modifiedTime:
+                      type: string
+                      example: 2022-09-20T18:28:49.000Z
+        '401':
+          description: Invalid authentification 
+        '404':
+          description: user or post or likes not found 
+        '500':
+          description: internal error
+          
+  /api/v1/comments/{id}:
+    get:
+      tags:
+       - comment
+      description: find a comment by his id
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          description: ID of comment to return
+          required: true
+          schema:
+            type: integer
+            example : 509
+      responses:
+        '200':
+          description: comment's informations retrieved
+          content:
+            application/json; charset=utf-8:
+              schema:
+                type: object
+                properties:
+                  id:
+                    description: comment's id
+                    type: integer
+                    example: 509
+                  userId:
+                    type: integer
+                    example : 8
+                  postId:
+                    type: integer
+                    example : 301
+                  text:
+                    type: string
+                    example: a comment on a post on groupomania 
+                  imageUrl:
+                    type: string
+                    example: null
+                  createdTime:
+                    type: string
+                    example: 2022-09-20T18:28:49.000Z
+                  modifiedTime:
+                    type: string
+                    example: 2022-09-20T18:28:49.000Z
+        '401':
+          description: Invalid authentification 
+        '404':
+          description: comment not found 
+        '500':
+          description: internal error
+          
+    put:
+      tags:
+       - comment
+      description: modify a comment
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          description: id of comment to update
+          required: true
+          schema:
+            type: integer
+            example : 509
+      requestBody:
+        content:
+          application/json:
+            schema:
+              description : without image uploaded, only text
+              type: object
+              properties:
+                text:
+                  type: string
+                  example: my updated comment without image on groupomania !
+                imageUrl:
+                  description: only to use if you want to delete image
+                  type: string
+                  example: toDelete (/!\ only to use if you want to delete actual image /!\)
+              required:
+                - text
+          multipart/form-data:
+            schema:
+              description : with image uploaded
+              type: object
+              properties:
+                post:
+                  type: object
+                  properties:
+                    text:
+                      type: string
+                      example: my updated comment with image on groupomania !
+                  required:
+                    - texte
+                fileName:
+                  type: string
+                  format: binary
+                  example : monImage.png            
+      responses:
+        '200':
+          description: comment updated
+          content:
+            application/json; charset=utf-8:
+              schema:
+                type: object
+                properties:
+                  message:
+                      type: string
+                      example: comment modified
+        '401':
+          description: Invalid authentification - updating comment aborted
+        '403':
+          description: action not autorized - updating comment aborted
+        '404':
+          description: comment not found - updating comment aborted
+          content:
+            application/json; charset=utf-8:
+              schema:
+                type: object
+                properties:
+                    message:
+                        type: string
+                        example: comment not found
+        '500':
+          description: internal error - updating comment aborted
+          
+    delete:
+      tags:
+       - comment
+      description: delete a comment by his id
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          description: ID of comment to delete
+          required: true
+          schema:
+            type: integer
+            example: 509
+      responses:
+        '200':
+          description: comment deleted
+          content:
+            application/json; charset=utf-8:
+              schema:
+                type: object
+                properties:
+                    message:
+                      type: string
+                      example : comment deleted
+        '401':
+          description: Invalid authentification 
+        '403':
+          description: action not autorized 
+        '404':
+          description: comment not found 
+        '500':
+          description: internal error
+          
+  /api/v1/likes/{id}:
+    delete:
+      tags:
+       - like
+      description: delete a like by his id
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          description: ID of like to delete
+          required: true
+          schema:
+            type: integer
+            example: 103
+      responses:
+        '200':
+          description: like deleted
+          content:
+            application/json; charset=utf-8:
+              schema:
+                type: object
+                properties:
+                    message:
+                      type: string
+                      example : like deleted
+        '401':
+          description: Invalid authentification 
+        '403':
+          description: action not autorized 
+        '404':
+          description: like not found 
+        '500':
+          description: internal error
+          
+components:
+  securitySchemes:
+    bearerAuth:            # arbitrary name for the security scheme
+      type: http
+      scheme: bearer

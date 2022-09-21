@@ -20,6 +20,7 @@ module.exports = (req, res, next) => {
         console.log('req.query.limit incorrect : ', req.query.limit);
         return res.status(400).json({ message:'request query.limit invalid. Must be an integer'});
     } 
+    
 	next();
 
 };

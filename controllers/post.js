@@ -188,7 +188,7 @@ exports.getAllPostsForOneUser = (req, res, next) => {
 */ 
 exports.getAllLikedPostsForOneUser = (req, res, next) => {
     console.log('getAllLikedPostsForOneUser');
-    // recherche des enregistrements en BDD post et like pour le user demandé 
+    // recherche des enregistrements en BDD post et like pour le user demandé
     Post.findAllLikedByUserId(req.params.id , (error, posts) => {
 
         if (error) {
@@ -203,6 +203,31 @@ exports.getAllLikedPostsForOneUser = (req, res, next) => {
         res.status(200).json(posts)
     }); 
 } 
+// <-------------------------------- Controller "getAllPostsLikedbyOneUser" ------------------------------->
+/**
+* récupération des informations des posts likés par un user donné
+*   - si ok : renvoie statut 200 et données
+*   - si ko : renvoie statut 404 ou 500
+*/ 
+exports.getAllPostsLikedbyOneUser = (req, res, next) => {
+    console.log('getAllPostsLikedbyOneUser');
+    // recherche des enregistrements en BDD post et like pour le user demandé
+    const userId = (req.query.userId == 'me') ? req.auth.userId : Number(req.query.userId);
+    Post.findAllLikedByUserId(userId , (error, posts) => {
+
+        if (error) {
+            console.log(' pb Post.findAllLikedByUserId (getAllLikedPostsForOneUser); erreur : ', error);
+            if (error.kind == 'not_found') { 
+                console.log('post non trouvé'); 
+                return res.status(404).json({ message: 'post not found'});
+            } else 
+                return res.status(500).json({ error });
+        }
+
+        res.status(200).json(posts)
+    }); 
+} 
+
 
 // <-------------------------------- Controller "getAllPosts" ------------------------------->
 /**

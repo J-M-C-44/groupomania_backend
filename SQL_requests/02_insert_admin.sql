@@ -1,2 +1,2 @@
--- insert into users (email, password, role)  values ('emailadmin@groupomania.com','pwD12345!','99');
+-- email = emailadmin@groupomania.com, password= pwD12345!, role = 99 (entier entre 1 et 255));
  insert into users (email, password, role)  values ('emailadmin@groupomania.com','$2b$10$HX3x/8tUr8gUFUEsX7o9nOzpbw/Hw7oIMCdDSflydl4pYMkffO9pG','99');
