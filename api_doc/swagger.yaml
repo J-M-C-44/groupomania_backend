@@ -29,7 +29,7 @@ paths:
               properties:
                 email:
                   type: string
-                  example: test123gmail.com
+                  example: test123@gmail.com
                 password:
                   type: string
                   example: pwD12345!

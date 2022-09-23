@@ -1,0 +1,1535 @@
+{
+	"info": {
+		"_postman_id": "35eed92c-345a-47fe-ba81-75dbf02ed8ce",
+		"name": "groupomania",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "signup & login",
+			"item": [
+				{
+					"name": "http://localhost:3000/api/auth/signup",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "",
+								"value": "test",
+								"type": "default",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"email\": \"test@gmail.com\",\r\n    \"password\": \"pwD12345!\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/api/v1/auth/signup",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"v1",
+								"auth",
+								"signup"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "http://localhost:3000/api/auth/login",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "",
+								"value": "test",
+								"type": "default",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"email\": \"test@gmail.com\",\r\n    \"password\": \"pwD12345!\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/api/v1/auth/login",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"v1",
+								"auth",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "http://localhost:3000/api/auth/login Admin",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "",
+								"value": "test",
+								"type": "default",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"email\": \"emailadmin@groupomania.com\",\r\n    \"password\": \"pwD12345!\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/api/v1/auth/login",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"v1",
+								"auth",
+								"login"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "users",
+			"item": [
+				{
+					"name": "http://localhost:3000/api/users/:id",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Bearer",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2MmY0YTZhMGI0NzM1Mzk5MzRhOGJjMDciLCJpYXQiOjE2NjI0NzEzNjEsImV4cCI6MTY2MjU1Nzc2MX0.b15BdVBluOV9VIBqvV3Gd6EOnQMn6ceIxAKvUXkcAAk",
+								"type": "default",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/api/v1/users/7",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"v1",
+								"users",
+								"7"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "http://localhost:3000/api/users/",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Bearer",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2MmY0YTZhMGI0NzM1Mzk5MzRhOGJjMDciLCJpYXQiOjE2NjI0NzEzNjEsImV4cCI6MTY2MjU1Nzc2MX0.b15BdVBluOV9VIBqvV3Gd6EOnQMn6ceIxAKvUXkcAAk",
+								"type": "default",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/api/v1/users/",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"v1",
+								"users",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "http://localhost:3000/api/users/:id/profile sans image",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Bearer",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2MmY0YTZhMGI0NzM1Mzk5MzRhOGJjMDciLCJpYXQiOjE2NjI0NzEzNjEsImV4cCI6MTY2MjU1Nzc2MX0.b15BdVBluOV9VIBqvV3Gd6EOnQMn6ceIxAKvUXkcAAk",
+								"type": "default",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"id\": \"3\",\r\n    \"lastname\": \"nom\",\r\n    \"firstname\": \"prénom\",\r\n    \"fonction\": \"developpeur\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/api/v1/users/1/profile",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"v1",
+								"users",
+								"1",
+								"profile"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "http://localhost:3000/api/users/:id/profile avec image",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Bearer",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2MmY0YTZhMGI0NzM1Mzk5MzRhOGJjMDciLCJpYXQiOjE2NjI0NzEzNjEsImV4cCI6MTY2MjU1Nzc2MX0.b15BdVBluOV9VIBqvV3Gd6EOnQMn6ceIxAKvUXkcAAk",
+								"type": "default",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "user",
+									"value": "{\"id\":\"2\", \"lastname\":\"duponda\", \"firstname\":\"jeana\", \"fonction\":\"développeur web 2\"}",
+									"type": "text"
+								},
+								{
+									"key": "image",
+									"contentType": "",
+									"type": "file",
+									"src": "/D:/reskilling/P6/images de sauces/moutarde-Amora.gif"
+								}
+							],
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/api/v1/users/2/profile",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"v1",
+								"users",
+								"2",
+								"profile"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "http://localhost:3000/api/users/:id/profile sans image mais avec demande suppression image",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Bearer",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2MmY0YTZhMGI0NzM1Mzk5MzRhOGJjMDciLCJpYXQiOjE2NjI0NzEzNjEsImV4cCI6MTY2MjU1Nzc2MX0.b15BdVBluOV9VIBqvV3Gd6EOnQMn6ceIxAKvUXkcAAk",
+								"type": "default",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\"id\":\"2\", \"lastname\":\"nom\", \"firstname\":\"jean-michel\", \"fonction\":\"developpeur\",\"avatarUrl\":\"toDelete\"}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/api/v1/users/2/profile",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"v1",
+								"users",
+								"2",
+								"profile"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "http://localhost:3000/api/users/:id/password",
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Bearer",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2MmY0YTZhMGI0NzM1Mzk5MzRhOGJjMDciLCJpYXQiOjE2NjI0NzEzNjEsImV4cCI6MTY2MjU1Nzc2MX0.b15BdVBluOV9VIBqvV3Gd6EOnQMn6ceIxAKvUXkcAAk",
+								"type": "default",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"password\": \"pwD12345!!\",\r\n    \"oldPassword\": \"pwD12345!\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/api/v1/users/2/password",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"v1",
+								"users",
+								"2",
+								"password"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "http://localhost:3000/api/users/:id/email",
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Bearer",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2MmY0YTZhMGI0NzM1Mzk5MzRhOGJjMDciLCJpYXQiOjE2NjI0NzEzNjEsImV4cCI6MTY2MjU1Nzc2MX0.b15BdVBluOV9VIBqvV3Gd6EOnQMn6ceIxAKvUXkcAAk",
+								"type": "default",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"email\": \"test2@gmail.com\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/api/v1/users/2/email",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"v1",
+								"users",
+								"2",
+								"email"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "http://localhost:3000/api/users/:id",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Bearer",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2MmY0YTZhMGI0NzM1Mzk5MzRhOGJjMDciLCJpYXQiOjE2NjI0NzEzNjEsImV4cCI6MTY2MjU1Nzc2MX0.b15BdVBluOV9VIBqvV3Gd6EOnQMn6ceIxAKvUXkcAAk",
+								"type": "default",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/api/v1/users/4",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"v1",
+								"users",
+								"4"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "posts",
+			"item": [
+				{
+					"name": "http://localhost:3000/api/posts/ sans image",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Bearer",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2MmY0YTZhMGI0NzM1Mzk5MzRhOGJjMDciLCJpYXQiOjE2NjI0NzEzNjEsImV4cCI6MTY2MjU1Nzc2MX0.b15BdVBluOV9VIBqvV3Gd6EOnQMn6ceIxAKvUXkcAAk",
+								"type": "default",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"text\": \"voici mon 1er post\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/api/v1/posts/",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"v1",
+								"posts",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "http://localhost:3000/api/posts/ avec image",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Bearer",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2MmY0YTZhMGI0NzM1Mzk5MzRhOGJjMDciLCJpYXQiOjE2NjI0NzEzNjEsImV4cCI6MTY2MjU1Nzc2MX0.b15BdVBluOV9VIBqvV3Gd6EOnQMn6ceIxAKvUXkcAAk",
+								"type": "default",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "post",
+									"value": "{\"text\":\"voici mon 2eme post\"}",
+									"type": "text"
+								},
+								{
+									"key": "image",
+									"contentType": "",
+									"type": "file",
+									"src": "/D:/reskilling/P6/images de sauces/moutarde-Amora.gif"
+								}
+							],
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/api/v1/posts/",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"v1",
+								"posts",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "http://localhost:3000/api/posts/:id sans image",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Bearer",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2MmY0YTZhMGI0NzM1Mzk5MzRhOGJjMDciLCJpYXQiOjE2NjI0NzEzNjEsImV4cCI6MTY2MjU1Nzc2MX0.b15BdVBluOV9VIBqvV3Gd6EOnQMn6ceIxAKvUXkcAAk",
+								"type": "default",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"text\": \"2eme post modifié une fois\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/api/v1/posts/2",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"v1",
+								"posts",
+								"2"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "http://localhost:3000/api/posts/:id avec image",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Bearer",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2MmY0YTZhMGI0NzM1Mzk5MzRhOGJjMDciLCJpYXQiOjE2NjI0NzEzNjEsImV4cCI6MTY2MjU1Nzc2MX0.b15BdVBluOV9VIBqvV3Gd6EOnQMn6ceIxAKvUXkcAAk",
+								"type": "default",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "post",
+									"value": "{\"text\":\"1er post modifié une 2eme fois avec ajout image\"}",
+									"type": "text"
+								},
+								{
+									"key": "image",
+									"contentType": "",
+									"type": "file",
+									"src": "/D:/reskilling/P6/images de sauces/moutarde-Amora.gif"
+								}
+							],
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/api/v1/posts/1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"v1",
+								"posts",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "http://localhost:3000/api/posts/:id sans image mais avec suppression image",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Bearer",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2MmY0YTZhMGI0NzM1Mzk5MzRhOGJjMDciLCJpYXQiOjE2NjI0NzEzNjEsImV4cCI6MTY2MjU1Nzc2MX0.b15BdVBluOV9VIBqvV3Gd6EOnQMn6ceIxAKvUXkcAAk",
+								"type": "default",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"text\": \"1er post modifié\",\r\n    \"imageUrl\":\"toDelete\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/api/v1/posts/1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"v1",
+								"posts",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "http://localhost:3000/api/posts/:id",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Bearer",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2MmY0YTZhMGI0NzM1Mzk5MzRhOGJjMDciLCJpYXQiOjE2NjI0NzEzNjEsImV4cCI6MTY2MjU1Nzc2MX0.b15BdVBluOV9VIBqvV3Gd6EOnQMn6ceIxAKvUXkcAAk",
+								"type": "default",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [],
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/api/post/11",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"post",
+								"11"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "http://localhost:3000/api/posts/",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Bearer",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2MmY0YTZhMGI0NzM1Mzk5MzRhOGJjMDciLCJpYXQiOjE2NjI0NzEzNjEsImV4cCI6MTY2MjU1Nzc2MX0.b15BdVBluOV9VIBqvV3Gd6EOnQMn6ceIxAKvUXkcAAk",
+								"type": "default",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [],
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/api/v1/posts/?page=1&limit=5",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"v1",
+								"posts",
+								""
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "1"
+								},
+								{
+									"key": "limit",
+									"value": "5"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "http://localhost:3000/api/users/:id/posts/",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Bearer",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2MmY0YTZhMGI0NzM1Mzk5MzRhOGJjMDciLCJpYXQiOjE2NjI0NzEzNjEsImV4cCI6MTY2MjU1Nzc2MX0.b15BdVBluOV9VIBqvV3Gd6EOnQMn6ceIxAKvUXkcAAk",
+								"type": "default",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [],
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/api/v1/users/2/posts/",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"v1",
+								"users",
+								"2",
+								"posts",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "http://localhost:3000/api/posts/likes/?userId=me",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Bearer",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2MmY0YTZhMGI0NzM1Mzk5MzRhOGJjMDciLCJpYXQiOjE2NjI0NzEzNjEsImV4cCI6MTY2MjU1Nzc2MX0.b15BdVBluOV9VIBqvV3Gd6EOnQMn6ceIxAKvUXkcAAk",
+								"type": "default",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/api/v1/posts/likes/?userId=me",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"v1",
+								"posts",
+								"likes",
+								""
+							],
+							"query": [
+								{
+									"key": "userId",
+									"value": "me"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "http://localhost:3000/api/posts/:id",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Bearer",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2MmY0YTZhMGI0NzM1Mzk5MzRhOGJjMDciLCJpYXQiOjE2NjI0NzEzNjEsImV4cCI6MTY2MjU1Nzc2MX0.b15BdVBluOV9VIBqvV3Gd6EOnQMn6ceIxAKvUXkcAAk",
+								"type": "default",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [],
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/api/v1/posts/11",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"v1",
+								"posts",
+								"11"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "likes",
+			"item": [
+				{
+					"name": "http://localhost:3000/api/posts/:id/likes",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Bearer",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2MmY0YTZhMGI0NzM1Mzk5MzRhOGJjMDciLCJpYXQiOjE2NjI0NzEzNjEsImV4cCI6MTY2MjU1Nzc2MX0.b15BdVBluOV9VIBqvV3Gd6EOnQMn6ceIxAKvUXkcAAk",
+								"type": "default",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"text\": \"123\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/api/v1/posts/2/likes",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"v1",
+								"posts",
+								"2",
+								"likes"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "http://localhost:3000/api/posts/:id/likes/",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Bearer",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2MmY0YTZhMGI0NzM1Mzk5MzRhOGJjMDciLCJpYXQiOjE2NjI0NzEzNjEsImV4cCI6MTY2MjU1Nzc2MX0.b15BdVBluOV9VIBqvV3Gd6EOnQMn6ceIxAKvUXkcAAk",
+								"type": "default",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/api/v1/posts/1/likes/",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"v1",
+								"posts",
+								"1",
+								"likes",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "http://localhost:3000/api/posts/:id/likes/count",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Bearer",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2MmY0YTZhMGI0NzM1Mzk5MzRhOGJjMDciLCJpYXQiOjE2NjI0NzEzNjEsImV4cCI6MTY2MjU1Nzc2MX0.b15BdVBluOV9VIBqvV3Gd6EOnQMn6ceIxAKvUXkcAAk",
+								"type": "default",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/api/v1/posts/1/likes/count",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"v1",
+								"posts",
+								"1",
+								"likes",
+								"count"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "http://localhost:3000/api/users/:id/likes/",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Bearer",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2MmY0YTZhMGI0NzM1Mzk5MzRhOGJjMDciLCJpYXQiOjE2NjI0NzEzNjEsImV4cCI6MTY2MjU1Nzc2MX0.b15BdVBluOV9VIBqvV3Gd6EOnQMn6ceIxAKvUXkcAAk",
+								"type": "default",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/api/v1/users/2/likes",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"v1",
+								"users",
+								"2",
+								"likes"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "http://localhost:3000/api/likes/:id",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Bearer",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2MmY0YTZhMGI0NzM1Mzk5MzRhOGJjMDciLCJpYXQiOjE2NjI0NzEzNjEsImV4cCI6MTY2MjU1Nzc2MX0.b15BdVBluOV9VIBqvV3Gd6EOnQMn6ceIxAKvUXkcAAk",
+								"type": "default",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [],
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/api/v1/likes/2",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"v1",
+								"likes",
+								"2"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "comments",
+			"item": [
+				{
+					"name": "http://localhost:3000/api/posts/:id/comments sans image",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Bearer",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2MmY0YTZhMGI0NzM1Mzk5MzRhOGJjMDciLCJpYXQiOjE2NjI0NzEzNjEsImV4cCI6MTY2MjU1Nzc2MX0.b15BdVBluOV9VIBqvV3Gd6EOnQMn6ceIxAKvUXkcAAk",
+								"type": "default",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"text\": \"voici mon 1er commentaire\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/api/v1/posts/12/comments",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"v1",
+								"posts",
+								"12",
+								"comments"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "http://localhost:3000/api/posts/:id/comments avec image",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Bearer",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2MmY0YTZhMGI0NzM1Mzk5MzRhOGJjMDciLCJpYXQiOjE2NjI0NzEzNjEsImV4cCI6MTY2MjU1Nzc2MX0.b15BdVBluOV9VIBqvV3Gd6EOnQMn6ceIxAKvUXkcAAk",
+								"type": "default",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "comment",
+									"value": "{\"text\":\"3em commentaire avec image\"}",
+									"type": "text"
+								},
+								{
+									"key": "image",
+									"contentType": "",
+									"type": "file",
+									"src": "/D:/reskilling/P6/images de sauces/moutarde-Amora.gif"
+								}
+							],
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/api/v1/posts/12/comments",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"v1",
+								"posts",
+								"12",
+								"comments"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "http://localhost:3000/api/comments/:id sans image Copy",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Bearer",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2MmY0YTZhMGI0NzM1Mzk5MzRhOGJjMDciLCJpYXQiOjE2NjI0NzEzNjEsImV4cCI6MTY2MjU1Nzc2MX0.b15BdVBluOV9VIBqvV3Gd6EOnQMn6ceIxAKvUXkcAAk",
+								"type": "default",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"text\": \"commentaire modifié2\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/api/v1/comments/5",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"v1",
+								"comments",
+								"5"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "http://localhost:3000/api/comments/:id avec image",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Bearer",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2MmY0YTZhMGI0NzM1Mzk5MzRhOGJjMDciLCJpYXQiOjE2NjI0NzEzNjEsImV4cCI6MTY2MjU1Nzc2MX0.b15BdVBluOV9VIBqvV3Gd6EOnQMn6ceIxAKvUXkcAAk",
+								"type": "default",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "comment",
+									"value": "{\"text\":\"commentaire\"}",
+									"type": "text"
+								},
+								{
+									"key": "image",
+									"contentType": "",
+									"type": "file",
+									"src": "/D:/reskilling/P6/images de sauces/moutarde-Amora.gif"
+								}
+							],
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/api/v1/comments/5",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"v1",
+								"comments",
+								"5"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "http://localhost:3000/api/comments/:id",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Bearer",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2MmY0YTZhMGI0NzM1Mzk5MzRhOGJjMDciLCJpYXQiOjE2NjI0NzEzNjEsImV4cCI6MTY2MjU1Nzc2MX0.b15BdVBluOV9VIBqvV3Gd6EOnQMn6ceIxAKvUXkcAAk",
+								"type": "default",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/api/v1/comments/1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"v1",
+								"comments",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "http://localhost:3000/api/post/:id/comments/",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Bearer",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2MmY0YTZhMGI0NzM1Mzk5MzRhOGJjMDciLCJpYXQiOjE2NjI0NzEzNjEsImV4cCI6MTY2MjU1Nzc2MX0.b15BdVBluOV9VIBqvV3Gd6EOnQMn6ceIxAKvUXkcAAk",
+								"type": "default",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/api/v1/posts/12/comments/",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"v1",
+								"posts",
+								"12",
+								"comments",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "http://localhost:3000/api/comments/:id",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Bearer",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2MmY0YTZhMGI0NzM1Mzk5MzRhOGJjMDciLCJpYXQiOjE2NjI0NzEzNjEsImV4cCI6MTY2MjU1Nzc2MX0.b15BdVBluOV9VIBqvV3Gd6EOnQMn6ceIxAKvUXkcAAk",
+								"type": "default",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/api/v1/comments/4",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"v1",
+								"comments",
+								"4"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "http://localhost:3000/api/users/:id/comments/",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Bearer",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2MmY0YTZhMGI0NzM1Mzk5MzRhOGJjMDciLCJpYXQiOjE2NjI0NzEzNjEsImV4cCI6MTY2MjU1Nzc2MX0.b15BdVBluOV9VIBqvV3Gd6EOnQMn6ceIxAKvUXkcAAk",
+								"type": "default",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/api/v1/users/2/comments",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"v1",
+								"users",
+								"2",
+								"comments"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "old",
+			"item": [
+				{
+					"name": "http://localhost:3000/api/users/:id/posts/liked/",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Bearer",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2MmY0YTZhMGI0NzM1Mzk5MzRhOGJjMDciLCJpYXQiOjE2NjI0NzEzNjEsImV4cCI6MTY2MjU1Nzc2MX0.b15BdVBluOV9VIBqvV3Gd6EOnQMn6ceIxAKvUXkcAAk",
+								"type": "default",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/api/v1/users/2/posts/liked/",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"v1",
+								"users",
+								"2",
+								"posts",
+								"liked",
+								""
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjQsInVzZXJSb2xlIjowLCJpYXQiOjE2NjM3Nzk1NTEsImV4cCI6MTY2Mzg2NTk1MX0.VwYd7AI386wPx41fItf9hnCDyjXu1HdBxoVRMrUXeD4",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	]
+}
