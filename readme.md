@@ -1,9 +1,9 @@
 # Groupomania / back-end
 
 ## Description
-  Projet 7 du parcours de Développeur Web d'OpenClassRooms : construire un réseau social d'entreprise. Celui-ci a pour but d'augmenter les relations sociales au sein de l'entreprise et aisni améliorer l'ambiance entre collaborateurs. 
+  Projet 7 du parcours de Développeur Web d'OpenClassRooms : construire un réseau social d'entreprise. Celui-ci a pour but d'augmenter les relations sociales au sein de l'entreprise et ainsi améliorer l'ambiance entre collaborateurs. 
   
-  Ici n'est traité que le backend. La partie frontend est disponible dans le repos suivant : ICIJCO-A-compléter
+  Ici n'est traité que le back-end. La partie front-end est disponible dans le repository suivant : https://github.com/J-M-C-44/angular-groupomania.git. Il est préférable de démarrer par l'installation du back-end.
 
 ##  Installation
   
