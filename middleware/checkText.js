@@ -5,7 +5,7 @@ const removeImageFile = require('../utils/removeFile');
 
 // les différentes regexp 
 // icicjco : revoir la regexp pour éviter injection sql
-const charAndDigitTypeRegexpMax = new RegExp('^[a-zàâéèëêïîôùüûçœ@#0-9][a-zàâéèëêïîôùüûçœ€@#0-9\'’,.!?&_-\\s]{1,1998}[a-zàâéèëêïîôùüûçœ€@#0-9.!?\\s]$','i');
+const charAndDigitTypeRegexpMax = new RegExp('^[a-zàâéèëêïîôùüûçœ@#0-9][a-zàâéèëêïîôùüûçœ€@#0-9\'’,.!?&_-\\s]{1,998}[a-zàâéèëêïîôùüûçœ€@#0-9.!?\\s]$','i');
 
 
 // <---------------------------- Middleware "checkText" --------------------------->
@@ -34,7 +34,7 @@ module.exports = (req, res, next) => {
         if (req.file) { 
             removeImageFile(req.file.filename);
         };
-        return res.status(400).json({ message:'Text invalid. Accepted (3 min - 2000 max) : a-z, 0-9 à â é è ë ê ï î ô ù ü ç œ € @ # \' ! ? &  -'});
+        return res.status(400).json({ message:'Text invalid. Accepted (3 min - 1000 max) : a-z, 0-9 à â é è ë ê ï î ô ù ü ç œ € @ # \' ! ? &  -'});
     } 
     
 	next();

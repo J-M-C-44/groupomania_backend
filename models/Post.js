@@ -127,7 +127,7 @@ Post.findAllLikedByUserId = (userId, result) => {
 Post.findAll = (result) => {
 
   sql.query(
-      'SELECT * FROM posts  ORDER BY modifiedTime DESC',
+      'SELECT * FROM posts  ORDER BY createdTime DESC',
 
       function (err, res) {
           if (err) {
@@ -156,7 +156,7 @@ Post.findAll = (result) => {
 Post.findAllPaginated = (limit, offset, result) => {
 
     sql.query(
-        'SELECT * FROM posts  ORDER BY modifiedTime DESC LIMIT ? OFFSET ?',
+        'SELECT * FROM posts  ORDER BY createdTime DESC LIMIT ? OFFSET ?',
         [limit, offset] ,
 
         function (err, res) {

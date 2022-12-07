@@ -127,7 +127,13 @@ exports.modifyPost = (req, res, next) => {
                 removeImageFile(oldFilename);      
             }
 
-            res.status(200).json({message : 'post modified'})
+            let body = {};
+            if (req.file) {
+                body =  {message : 'post modified', imageUrl : postObject.imageUrl }
+            } else {
+                body =  {message : 'post modified' }
+            }
+            res.status(200).json(body)
         })
     }); 
 } 

@@ -121,7 +121,7 @@ paths:
     get:
       tags:
        - user
-      description: find user by his id
+      description: find user by his id (or me)
       security:
         - bearerAuth: []
       parameters:
@@ -225,6 +225,9 @@ paths:
                       id:
                         type: integer
                         example: 8
+                      email:
+                        type: string
+                        example : test123@gmail.com
                       lastname:
                         type: string
                         example: Covert

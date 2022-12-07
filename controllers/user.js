@@ -131,9 +131,10 @@ exports.login = (req, res, next) => {
 */
 exports.getOneUser= (req, res, next) => {
     console.log('getOneUser');
-   
+    let id = req.params.id == 'me' ?  req.auth.userId  : req.params.id
+
     // recherche de l'enregistrement demandé en BDD user 
-        User.findById(req.params.id , (error, user) => {
+        User.findById(id , (error, user) => {
 
             if (error) {
                 console.log('pb user.findById (getOneUser) erreur : ', error);
@@ -147,7 +148,9 @@ exports.getOneUser= (req, res, next) => {
             // on supprime les données sensibles
             //delete user.email ;
             delete user.password; 
-            delete user.role ;
+            if (req.params.id != 'me') {
+                delete user.role ;
+            }
             res.status(200).json(user)
         });   
 };
@@ -175,7 +178,7 @@ exports.getAllUsers= (req, res, next) => {
             }
             // on supprime les données sensibles
             for (let user of users) {
-                delete user.email ;
+                // delete user.email ;
                 delete user.password; 
                 delete user.role ;
             }
@@ -256,7 +259,13 @@ exports.modifyProfile= (req, res, next) => {
                     const oldFilename = user.avatarUrl.split("/images/user/")[1];
                     removeImageFile(oldFilename, 'user');      
                 }
-                res.status(200).json({message : 'user modified'})
+                let body = {};
+                if (req.file) {
+                    body =  {message : 'user modified', avatarUrl : userObject.avatarUrl }
+                } else {
+                    body =  {message : 'user modified' }
+                }
+                res.status(200).json(body)
             })
         });   
     }
@@ -313,7 +322,13 @@ exports.modifyPassword = (req, res, next) => {
                 })
                
                 // si pb avec bcrypt
-                .catch(error => res.status(500).json({ error }));
+                .catch(error => {
+                    if (error.message == 'Not authorized, verify old password') {
+                        res.status(401).json({ error })
+                    } else {
+                        res.status(500).json({ error })
+                    }
+                });
             
         });
     };

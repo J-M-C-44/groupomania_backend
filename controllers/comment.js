@@ -180,9 +180,21 @@ exports.modifyComment = (req, res, next) => {
 
         // mise à jour de l'enregistrement demandé en BDD comments 
         // sans nouveau fichier image transmis, on conserve l'URL initiale 
-        if (!req.file) {
-            commentObject.imageUrl = comment.imageUrl;
-        };
+        // if (!req.file) {
+        //     commentObject.imageUrl = comment.imageUrl;
+        // };
+        // sans nouveau fichier image transmis et sans demande de suppression de l'image, on conserve l'URL initiale 
+        let oldImageToDelete = false
+        if (req.file) {
+            oldImageToDelete = true 
+        } else {
+            if (commentObject.imageUrl && commentObject.imageUrl == 'toDelete') {
+                oldImageToDelete = true;
+                commentObject.imageUrl = null;   
+            } else {
+                commentObject.imageUrl = comment.imageUrl;
+            }
+        }
         commentObject.id = req.params.id ;
  
         Comment.update(commentObject , (error, result) => {
@@ -196,11 +208,17 @@ exports.modifyComment = (req, res, next) => {
                 return res.status(500).json({ error });
             }
             // delete fichier précédent si besoin
-            if ( (req.file)  && (comment.imageUrl != null) ) {
+            if (comment.imageUrl != null && oldImageToDelete ) {
                 const oldFilename = comment.imageUrl.split("/images/post/")[1];
                 removeImageFile(oldFilename);      
             }
-            res.status(200).json({message : 'comment modified'})
+            let body = {};
+            if (req.file) {
+                body =  {message : 'comment modified', imageUrl : commentObject.imageUrl }
+            } else {
+                body =  {message : 'comment modified' }
+            }
+            res.status(200).json(body)
         })
     }); 
 } 
