@@ -5,7 +5,7 @@ const removeImageFile = require('../utils/removeFile');
 
 // les différentes regexp 
 // icicjco : revoir la regexp pour éviter injection sql
-const charAndDigitTypeRegexpMax = new RegExp('^[a-zàâéèëêïîôùüûçœ@#0-9][a-zàâéèëêïîôùüûçœ€@#0-9\'’,.!?&_-\\s]{1,998}[a-zàâéèëêïîôùüûçœ€@#0-9.!?\\s]$','i');
+const charAndDigitTypeRegexpMax = new RegExp('^[a-zàâéèëêïîôùüûçœ@#0-9][a-zàâéèëêïîôùüûçœ€@#0-9\'’,.()!?&_:-\\s]{1,998}[a-zàâéèëêïîôùüûçœ€@#()0-9.!?\\s]$','i');
 
 
 // <---------------------------- Middleware "checkText" --------------------------->
